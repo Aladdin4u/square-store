@@ -12,7 +12,7 @@ export default function Home() {
       welcome square
       <div className={styles.container}>
         <PaymentForm
-          applicationId="sandbox-XXXXXX"
+          applicationId="sandbox-sq0idb-sRNqzQHou2IvQHiuOfyd0Q"
           cardTokenizeResponseReceived={async (token, verifiedBuyer) => {
             const response = await fetch("/api/pay", {
               method: "POST",
