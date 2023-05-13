@@ -1,45 +1,19 @@
-import {
-  ApplePay,
-  GooglePay,
-  CreditCard,
-  PaymentForm,
-} from "react-square-web-payments-sdk";
-import styles from "../styles/Home.module.css";
+import axios from "axios";
 
 export default function Home() {
+  const handleCatalog = async() => {
+    const res = await axios.post("api/catalog/create", {})
+    console.log(res)
+  }
+  const handleGetCatalog = async() => {
+    const res = await axios.get("api/catalog/get")
+    console.log(res)
+  }
   return (
-    <div className="bg-cover bg-center bg-local">
+    <div className="flex flex-col justify-center item-center">
       welcome square
-      <div className={styles.container}>
-        <PaymentForm
-          applicationId="sandbox-sq0idb-sRNqzQHou2IvQHiuOfyd0Q"
-          cardTokenizeResponseReceived={async (token, verifiedBuyer) => {
-            const response = await fetch("/api/pay", {
-              method: "POST",
-              headers: {
-                "Content-type": "application/json",
-              },
-              body: JSON.stringify({
-                sourceId: token.token,
-              }),
-            });
-            console.log(await response.json());
-          }}
-          locationId="XXXXXXXXXX"
-          createPaymentRequest={() => ({
-            countryCode: "US",
-            currencyCode: "USD",
-            total: {
-              amount: "1.00",
-              label: "Total",
-            },
-          })}
-        >
-          <ApplePay />
-          <GooglePay />
-          <CreditCard />
-        </PaymentForm>
-      </div>
+      <button className="bg-blue-500 text-white" onClick={handleCatalog}>click me</button>
+      <button className="bg-green-500 text-white" onClick={handleGetCatalog}>click me</button>
     </div>
   );
 }
