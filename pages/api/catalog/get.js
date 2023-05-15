@@ -11,6 +11,7 @@ export default async function handler(req, res) {
     const response = await catalogApi.listCatalog();
   
     console.log(response.result);
+    res.json(response.toString())
   } catch(error) {
     console.log(error);
   }
