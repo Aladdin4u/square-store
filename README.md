@@ -20,7 +20,7 @@ Constantly refactor the code and improve the usage and scalablitiy of the app. U
 
 ## Lessons Learned:
 
-I learnt how to sqaure to track inventory states so customer can't order item not avalible in the store.
+I learnt how to use sqaure to track inventory states so customer can't order item not avalible in the store.
 
 ## Installation:
 
@@ -34,5 +34,5 @@ I learnt how to sqaure to track inventory states so customer can't order item no
 
 ## Usage:
 
-1. run `npm run dev` to start app
+1. run `yarn run dev` to start app
 1. Navigate to `localhost:3000`
