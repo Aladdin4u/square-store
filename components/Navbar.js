@@ -21,31 +21,31 @@ const products = [
   {
     name: "Hoodies",
     description: "Get a better understanding of your traffic",
-    href: "category/hoodies",
+    href: "/category/hoodies",
     icon: ChartPieIcon,
   },
   {
     name: "Sweatshirts",
     description: "Speak directly to your customers",
-    href: "category/sweatshirts",
+    href: "/category/sweatshirts",
     icon: CursorArrowRaysIcon,
   },
   {
     name: "Shirts",
     description: "Your customers’ data will be safe and secure",
-    href: "category/shirts",
+    href: "/category/shirts",
     icon: FingerPrintIcon,
   },
   {
     name: "T-Shirt",
     description: "Connect with third-party tools",
-    href: "category/t-shirt",
+    href: "/category/t-shirt",
     icon: SquaresPlusIcon,
   },
   {
     name: "Jackets",
     description: "Build strategic funnels that will convert",
-    href: "category/jackets",
+    href: "/category/jackets",
     icon: ArrowPathIcon,
   },
 ];
@@ -67,14 +67,14 @@ export default function Navbar() {
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
       >
-        <div className="flex lg:flex-1">
+        <div className="flex lg:flex-1 space-x-4">
           <a href="#" className="flex items-center justify-center">
-            <div className="w-6 text-white text-center font-bold bg-black mx-auto border-round">
+            <div className="w-6 text-white text-center font-bold bg-black mx-auto rounded">
               F
             </div>
+            <span className="ml-4 font-bold">Finesse</span>
           </a>
-        </div>
-        <Popover.Group className="hidden lg:flex lg:gap-x-12">
+        <Popover.Group className="lg:flex lg:gap-x-12">
           <Popover className="relative">
             <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
@@ -134,12 +134,13 @@ export default function Navbar() {
             </Transition>
           </Popover>
         </Popover.Group>
-        <div className="lg:flex lg:flex-1 lg:justify-end">
+        </div>
+        <div className="flex lg:flex-1 lg:justify-end space-x-4">
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
           <MagnifyingGlassIcon className="h-6 w-6" />
           </a>
-          <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-          <ShoppingCartIcon className="h-6 w-6" /> <span aria-hidden="true" className="w-6 p-2 rounded-full bg-orange-500">0</span>
+          <a href="#" className="text-sm font-semibold leading-6 text-gray-900 relative">
+          <ShoppingCartIcon className="h-6 w-6" /> <span aria-hidden="true" className="absolute -top-1 -right-1 w-4 h-4 text-center text-sm rounded-full bg-orange-500">0</span>
           </a>
         </div>
       </nav>
