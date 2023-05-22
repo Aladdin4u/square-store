@@ -17,14 +17,14 @@ export default function Hero() {
     <div className="bg-gray-300 w-full">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div className="px-8 lg:px-14">
-          <h1 className="text-6xl font-bold uppercase tracking-tight text-gray-900 sm:text-9xl">
+          <h1 className="mt-16 lg:mt-6 text-6xl font-bold uppercase tracking-tight text-gray-900 sm:text-8xl">
             Get <br /> Yourself <br />
             <span className="text-white">
               into the
               <br /> right gear
             </span>
           </h1>
-          <div className="mt-10 flex gap-x-6">
+          <div className="my-10 flex gap-x-6">
             <a
               href="#"
               className="text-2xl font-semibold leading-6 text-gray-900"

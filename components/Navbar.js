@@ -12,7 +12,7 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0">
+    <header className="fixed top-0 left-0 right-0 z-10">
       <nav
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
         aria-label="Global"
@@ -44,7 +44,7 @@ export default function Navbar() {
             <ShoppingCartIcon className="h-6 w-6" />{" "}
             <span
               aria-hidden="true"
-              className="absolute -top-1 -right-1 w-4 h-4 text-center text-sm rounded-full bg-orange-500"
+              className="absolute -top-1 -right-1 w-4 h-4 p-1 text-center text-xs rounded-full bg-orange-500 flex justify-center items-center"
             >
               0
             </span>
