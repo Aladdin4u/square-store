@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <div className="bg-black pt-24 sm:pt-32">
+    <div className="bg-black/80 pt-24 sm:pt-32">
       <div className="mx-auto flex flex-col max-w-7xl gap-x-8 gap-y-20 px-6 lg:px-8 lg:flex-row">
         <div className="max-w-2xl">
           <h2 className="text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">
@@ -126,11 +126,11 @@ export default function Footer() {
       </div>
       <div className="mx-auto mt-6 flex max-w-7xl gap-x-8 gap-y-20 px-6 pb-6 lg:px-8 items-center xl:justify-between">
         <div>
-          <p className="mt-4 text-sm leading-8 text-gray-300 ">
+          <p className="mt-4 text-sm leading-8 text-gray-300">
             &copy; 2023 Finesse, All right reserved.
           </p>
         </div>
-        
+        <p className="mt-4 text-sm leading-8 text-gray-300">Square Hackathon 2023</p>
       </div>
     </div>
   );
