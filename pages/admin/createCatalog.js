@@ -2,13 +2,14 @@ import { useState } from "react";
 import EditVaraiation from "../../components/EditVaraition";
 
 export default function CreateCatalog() {
-    const [array, setArray] = useState([])
+  const [array, setArray] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     variations: [],
   });
   const [variation, setVariation] = useState({
+    id: Math.random() * 4,
     name: "",
     amount: "",
   });
@@ -30,33 +31,62 @@ export default function CreateCatalog() {
       };
     });
   };
+  const handleEditVaraition = (e,id) => {
+    setArray((prevArray) => {
+        return prevArray.map((item) => {
+          return item.id === id
+            ? [e.target.name]: e.target.value
+        });
+    });
+  };
   const submitVaration = (e) => {
     e.preventDefault();
-    setArray(prevArray => {
-        return [ ...prevArray, variation ]
-    })
+    setArray((prevArray) => {
+      return [...prevArray, variation];
+    });
     setFormData((prevFormData) => {
-        return {
-          ...prevFormData,
-          variations: [variation]
-        };
-      });
-    console.log(array)
-    setVariation({name: "",
-    amount: "",})
+      return {
+        ...prevFormData,
+        variations: [variation],
+      };
+    });
+    console.log(array);
+    setVariation({ name: "", amount: "" });
   };
 
-//   id: "#small_coffee",
-//     name: "",
-//     type: "ITEM_VARIATION",
-//     item_variation_data: {
-//       price_money: {
-//         amount: "",
-//         currency: "USD",
-//       },
-//       pricing_type: "FIXED_PRICING",
-//       item_id: "#coffee",
-//     },
+  const editVaraiation = (e, id) => {
+    e.preventDefault();
+    setArray((prevArray) => {
+      return prevArray.map((item) => {
+        return item.id === id
+          ? { ...item, name: item.name, amount: item.amount }
+          : item;
+      });
+    });
+  };
+
+  const deleteVaraiation = (e, id) => {
+    e.preventDefault();
+    setArray((prevArray) => {
+      return prevArray.map((item) => {
+        return item.id === id
+          ? item.pop()
+          : item;
+      });
+    });
+  };
+
+  //   id: "#small_coffee",
+  //     name: "",
+  //     type: "ITEM_VARIATION",
+  //     item_variation_data: {
+  //       price_money: {
+  //         amount: "",
+  //         currency: "USD",
+  //       },
+  //       pricing_type: "FIXED_PRICING",
+  //       item_id: "#coffee",
+  //     },
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="my-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -101,10 +131,20 @@ export default function CreateCatalog() {
             </div>
           </div>
           <h2>Add product variation</h2>
-          {array.length > 0 && <><pre>{JSON.stringify(array, null, 4)}</pre>
-            <EditVaraiation />
-          </>
-          }
+          {array.length > 0 && (
+            <>
+              <pre>{JSON.stringify(array, null, 4)}</pre>
+             { array.map(arr => (
+              <EditVaraiation
+              key={arr.id}
+                change={handleEditVaraition}
+                value={arr}
+                edit={() => editVaraiation(arr.id)}
+                delete={() => deleteVaraiation(arr.id)}
+              />
+              ))}
+            </>
+          )}
           <div className="w-full flex justify-between items-end gap-4">
             <div>
               <div>
