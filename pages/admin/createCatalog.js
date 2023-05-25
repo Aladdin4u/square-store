@@ -2,19 +2,14 @@ import { useState } from "react";
 import EditVaraiation from "../../components/EditVaraition";
 
 export default function CreateCatalog() {
-  const [array, setArray] = useState([]);
+  const [variation, setVariation] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    variations: [],
-  });
-  const [variation, setVariation] = useState({
-    id: Math.random() * 4,
-    name: "",
-    amount: "",
+    varName: "",
+    varAmount: "",
   });
   console.log(formData);
-  console.log(variation, array);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       return {
@@ -23,75 +18,57 @@ export default function CreateCatalog() {
       };
     });
   };
-  const handleVaraition = (e) => {
-    setVariation((prevVariation) => {
-      return {
-        ...prevVariation,
-        [e.target.name]: e.target.value,
-      };
-    });
-  };
-  const handleEditVaraition = (e,id) => {
-    setArray((prevArray) => {
-        return prevArray.map((item) => {
-          return item.id === id
-            ? [e.target.name]: e.target.value
-        });
-    });
-  };
   const submitVaration = (e) => {
     e.preventDefault();
-    setArray((prevArray) => {
-      return [...prevArray, variation];
+    const newVariation = {
+      id: `#${formData.varName}_${formData.name}`,
+      name: formData.varName,
+      type: "ITEM_VARIATION",
+      item_variation_data: {
+        price_money: {
+          amount: parseInt(formData.varAmount),
+          currency: "USD",
+        },
+        pricing_type: "FIXED_PRICING",
+        item_id: `#${formData.name}`,
+      },
+    };
+
+    if (!formData.varName || !formData.varAmount) {
+      return alert("enter valid values");
+    }
+    setVariation((prevVariation) => {
+      return [...prevVariation, newVariation];
     });
+
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
-        variations: [variation],
+        varName: "",
+        varAmount: "",
       };
     });
-    console.log(array);
-    setVariation({ name: "", amount: "" });
   };
 
-  const editVaraiation = (e, id) => {
-    e.preventDefault();
-    setArray((prevArray) => {
-      return prevArray.map((item) => {
-        return item.id === id
-          ? { ...item, name: item.name, amount: item.amount }
-          : item;
-      });
-    });
+  const deleteVaraiation = (id) => {
+    setVariation((prevVariation) =>
+      prevVariation.filter((arr) => arr.id !== id)
+    );
   };
-
-  const deleteVaraiation = (e, id) => {
-    e.preventDefault();
-    setArray((prevArray) => {
-      return prevArray.map((item) => {
-        return item.id === id
-          ? item.pop()
-          : item;
-      });
-    });
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const body = {
+      name: formData.name,
+      description: formData.description,
+      variation: variation
+    }
+    console.log(body)
   };
-
-  //   id: "#small_coffee",
-  //     name: "",
-  //     type: "ITEM_VARIATION",
-  //     item_variation_data: {
-  //       price_money: {
-  //         amount: "",
-  //         currency: "USD",
-  //       },
-  //       pricing_type: "FIXED_PRICING",
-  //       item_id: "#coffee",
-  //     },
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="my-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <h1>Create Catalog</h1>
-        <form className="space-y-6" action="#" method="POST">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="name"
@@ -131,17 +108,16 @@ export default function CreateCatalog() {
             </div>
           </div>
           <h2>Add product variation</h2>
-          {array.length > 0 && (
+          {variation.length > 0 && (
             <>
-              <pre>{JSON.stringify(array, null, 4)}</pre>
-             { array.map(arr => (
-              <EditVaraiation
-              key={arr.id}
-                change={handleEditVaraition}
-                value={arr}
-                edit={() => editVaraiation(arr.id)}
-                delete={() => deleteVaraiation(arr.id)}
-              />
+              {/* <pre>{JSON.stringify(variation, null, 4)}</pre> */}
+              {variation.map((arr, i) => (
+                <EditVaraiation
+                  key={arr.id}
+                  name={arr.name}
+                  amount={arr.item_variation_data.price_money.amount}
+                  delete={() => deleteVaraiation(arr.id)}
+                />
               ))}
             </>
           )}
@@ -149,19 +125,19 @@ export default function CreateCatalog() {
             <div>
               <div>
                 <label
-                  htmlFor="name"
+                  htmlFor="varName"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Name
                 </label>
                 <div className="mt-2">
                   <input
-                    id="name"
-                    name="name"
+                    id="varName"
+                    name="varName"
                     type="text"
-                    onChange={handleVaraition}
-                    value={variation.name}
-                    required
+                    onChange={handleChange}
+                    value={formData.varName}
+                    disabled={!formData.name || !formData.description ? true : false}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -171,19 +147,19 @@ export default function CreateCatalog() {
             <div>
               <div>
                 <label
-                  htmlFor="amount"
+                  htmlFor="varAmount"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Amount
                 </label>
                 <div className="mt-2">
                   <input
-                    id="amount"
-                    name="amount"
+                    id="varAmount"
+                    name="varAmount"
                     type="number"
-                    onChange={handleVaraition}
-                    value={variation.amount}
-                    required
+                    onChange={handleChange}
+                    value={formData.varAmount}
+                    disabled={!formData.name || !formData.description ? true : false}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
