@@ -1,8 +1,11 @@
 import { useState } from "react";
 import EditVaraiation from "../../components/EditVaraition";
+import Image from "next/image";
+import { CameraIcon } from "@heroicons/react/24/outline";
 
 export default function CreateCatalog() {
   const [variation, setVariation] = useState([]);
+  const [files, setFiles] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -10,6 +13,7 @@ export default function CreateCatalog() {
     varAmount: "",
   });
   console.log(formData);
+  console.log(files[0].name);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       return {
@@ -56,19 +60,54 @@ export default function CreateCatalog() {
     );
   };
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const body = {
       name: formData.name,
       description: formData.description,
-      variation: variation
-    }
-    console.log(body)
+      variation: variation,
+    };
+    console.log(body);
   };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="my-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <h1>Create Catalog</h1>
         <form className="space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label
+              htmlFor="files"
+              className="block text-sm font-medium leading-6 text-gray-900"
+            >
+              Product Image
+            </label>
+            <div className="mt-2 flex justify-between items-center">
+              <input
+                id="files"
+                name="files"
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => setFiles(e.target.files)}
+                className="hidden"
+              />
+              <div className="border h-24 w-24 bg-gray-300 rounded-full overflow-hidden flex justify-center items-center">
+                <label htmlFor="files">
+                  {files && files[0] ? (
+                    <Image
+                      src={URL.createObjectURL(files[0])}
+                      width={300}
+                      height={300}
+                      alt="catalog image"
+                      className="h-24 w-24 object-cover overflow"
+                      unoptimized
+                    />
+                  ) : (
+                    <CameraIcon className="h-6 w-6" aria-hidden="true" />
+                  )}
+                </label>
+              </div>
+            </div>
+          </div>
           <div>
             <label
               htmlFor="name"
@@ -137,7 +176,9 @@ export default function CreateCatalog() {
                     type="text"
                     onChange={handleChange}
                     value={formData.varName}
-                    disabled={!formData.name || !formData.description ? true : false}
+                    disabled={
+                      !formData.name || !formData.description ? true : false
+                    }
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -159,7 +200,9 @@ export default function CreateCatalog() {
                     type="number"
                     onChange={handleChange}
                     value={formData.varAmount}
-                    disabled={!formData.name || !formData.description ? true : false}
+                    disabled={
+                      !formData.name || !formData.description ? true : false
+                    }
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -173,7 +216,14 @@ export default function CreateCatalog() {
               Add
             </button>
           </div>
-
+          <Image
+                      src={files[0]?.name}
+                      width={300}
+                      height={300}
+                      alt="catalog image"
+                      className="h-24 w-24 object-cover overflow"
+                      unoptimized
+                    />
           <div>
             <button
               type="submit"
