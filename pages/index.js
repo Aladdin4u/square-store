@@ -24,6 +24,7 @@ export default function Home() {
     <div className="flex flex-col justify-center item-center">
       <Hero />
       <Collections />
+      <button onClick={handleCatalog}>save</button>
       <Product />
       <Newsletter />
     </div>

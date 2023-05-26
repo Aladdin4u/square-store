@@ -1,9 +1,11 @@
 import { useState } from "react";
-import EditVaraiation from "../../components/EditVaraition";
 import Image from "next/image";
+import axios from "axios";
+import EditVaraiation from "../../components/EditVaraition";
 import { CameraIcon } from "@heroicons/react/24/outline";
 
 export default function CreateCatalog() {
+  const [data, setData] = useState([]);
   const [variation, setVariation] = useState([]);
   const [files, setFiles] = useState("");
   const [formData, setFormData] = useState({
@@ -13,7 +15,6 @@ export default function CreateCatalog() {
     varAmount: "",
   });
   console.log(formData);
-  console.log(files[0].name);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       return {
@@ -59,7 +60,7 @@ export default function CreateCatalog() {
       prevVariation.filter((arr) => arr.id !== id)
     );
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const body = {
       name: formData.name,
@@ -67,6 +68,13 @@ export default function CreateCatalog() {
       variation: variation,
     };
     console.log(body);
+    try {
+      const res = await axios.post("../api/catalog/additemqty", {});
+      console.log(res);
+      setData(res)
+    } catch (error) {
+      console.log(error)
+    }
   };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -216,14 +224,6 @@ export default function CreateCatalog() {
               Add
             </button>
           </div>
-          <Image
-                      src={files[0]?.name}
-                      width={300}
-                      height={300}
-                      alt="catalog image"
-                      className="h-24 w-24 object-cover overflow"
-                      unoptimized
-                    />
           <div>
             <button
               type="submit"
@@ -234,6 +234,7 @@ export default function CreateCatalog() {
           </div>
         </form>
       </div>
+      {data && <pre>{JSON.stringify(data, null, 4)}</pre>}
     </div>
   );
 }

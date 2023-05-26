@@ -18,16 +18,35 @@ export default async function handler(req, res) {
             adjustment: {
               fromState: 'NONE',
               toState: 'IN_STOCK',
-              locationId: 'EF6D9SACKWBKZ',
-              catalogObjectId: '6F4K33KPNUVDWKZ43KUIFH6K',
+              locationId: 'L8PQE1FX87X0V',
+              catalogObjectId: 'IR5KJ5GLVN6F2PV3VELIHOMA',
               quantity: '100',
-              occurredAt: '2020-12-18T21:10:00Z'
+              occurredAt: new Date().toISOString()
+            }
+          },
+          {
+            type: 'ADJUSTMENT',
+            adjustment: {
+              fromState: 'NONE',
+              toState: 'IN_STOCK',
+              locationId: 'L8PQE1FX87X0V',
+              catalogObjectId: 'VDKRQCLTKBFTMN6I5NO3ONQG',
+              quantity: '100',
+              occurredAt: new Date().toISOString()
             }
           }
         ]
       });
     
       console.log(response.result);
+      return res.json(
+        JSON.parse(
+          JSON.stringify(
+            response.result,
+            (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+          )
+        )
+      );
     } catch(error) {
       console.log(error);
     }
