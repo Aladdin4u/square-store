@@ -6,6 +6,7 @@ import { CameraIcon } from "@heroicons/react/24/outline";
 
 export default function CreateCatalog() {
   const [data, setData] = useState([]);
+  const [error, setError] = useState(false);
   const [variation, setVariation] = useState([]);
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
@@ -71,20 +72,32 @@ export default function CreateCatalog() {
     if (!formData.color || !formData.size|| !formData.amount) {
       return alert("enter product variation values");
     }
-    setVariation((prevVariation) => {
-      return [...prevVariation, newVariation];
-    });
+    
 
-    setColor((prevColor) => {
-      return [...prevColor, newColor];
-    });
-    setSize((prevSize) => {
-      let check = [...prevSize.filter(x => x === newSize.id)]
-      if(check) {
-          return
-      }
-      // return [...prevSize, newSize];
-    });
+    if(variation.find(x => x.id === newVariation.id)) {
+      return setError(true);
+    } else {
+      setVariation((prevVariation) => {
+        return [...prevVariation, newVariation];
+      });
+
+    }
+    if(color.find(x => x.id === newColor.id)) {
+      return setError(true);
+    } else {
+      setColor((prevColor) => {
+        return [...prevColor, newColor];
+      });
+
+    }
+    if(size.find(x => x.id == newSize.id)) {
+      console.log("=",newSize.id)
+      return setError(true);
+    } else {
+      setSize((prevSize) => {
+        return [...prevSize, newSize];
+      });
+    }
 
     setFormData((prevFormData) => {
       return {
@@ -93,6 +106,7 @@ export default function CreateCatalog() {
         amount: "",
       };
     });
+    setError(false)
   };
 
   const deleteVaraiation = (id, sizeId, colorId) => {
@@ -107,12 +121,15 @@ export default function CreateCatalog() {
     setColor((prevColor) => prevColor.filter((arr) => arr.id !== sizeId));
     setSize((prevSize) => prevSize.filter((arr) => arr.id !== colorId));
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = {
       name: formData.name,
       description: formData.description,
       variation: variation,
+      color: color,
+      Size: size,
     };
     console.log(body);
     // try {
@@ -294,10 +311,11 @@ export default function CreateCatalog() {
             <button
               onClick={submitVaration}
               className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
+              >
               Add
             </button>
           </div>
+              {error && <p className="max-w-sm text-sm text-red-600 text-center bg-red-300 rounded">enter a valid product variations</p>}
           <div>
             <button
               type="submit"
