@@ -2,13 +2,13 @@ import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 
-export default function Modals(props) {
+export default function Modals() {
   const [open, setOpen] = useState(true)
 
   const cancelButtonRef = useRef(null)
 
   return (
-    <Transition.Root show={open} as={Fragment} onClick={props.toggle}>
+    <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
         <Transition.Child
           as={Fragment}

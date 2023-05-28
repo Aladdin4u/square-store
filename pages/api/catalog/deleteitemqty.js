@@ -7,7 +7,7 @@ const { inventoryApi } = new Client({
 });
 
 export default async function handler(req, res) {
-  
+  const {id, quantity} = req.body.formData
   if ( req.method === 'POST' ) {
     try {
       const response = await inventoryApi.batchChangeInventory({
@@ -18,16 +18,24 @@ export default async function handler(req, res) {
             adjustment: {
               fromState: 'IN_STOCK',
               toState: 'WASTE',
-              locationId: 'EF6D9SACKWBKZ',
-              catalogObjectId: '6F4K33KPNUVDWKZ43KUIFH6K',
-              quantity: '2',
-              occurredAt: '2020-12-18T21:19:00Z'
+              locationId: 'L8PQE1FX87X0V',
+              catalogObjectId: id,
+              quantity: quantity,
+              occurredAt: new Date().toISOString()
             }
           }
         ]
       });
     
       console.log(response.result);
+      return res.json(
+        JSON.parse(
+          JSON.stringify(
+            response.result,
+            (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+          )
+        )
+      );
     } catch(error) {
       console.log(error);
     }

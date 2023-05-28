@@ -91,7 +91,6 @@ export default function CreateCatalog() {
 
     }
     if(size.find(x => x.id == newSize.id)) {
-      console.log("=",newSize.id)
       return setError(true);
     } else {
       setSize((prevSize) => {
@@ -110,11 +109,6 @@ export default function CreateCatalog() {
   };
 
   const deleteVaraiation = (id, sizeId, colorId) => {
-    console.log({
-      id: id,
-      size:sizeId,
-      color: colorId
-    })
     setVariation((prevVariation) =>
       prevVariation.filter((arr) => arr.id !== id)
     );
