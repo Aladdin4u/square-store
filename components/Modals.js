@@ -1,93 +1,14 @@
 import { Fragment, useRef, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import Link from "next/link";
-import Siderbar from "../../components/Sidebar";
-import axios from "axios";
 
-export default function Inventry() {
-  const [open, setOpen] = useState(false)
+export default function Modals(props) {
+  const [open, setOpen] = useState(true)
 
   const cancelButtonRef = useRef(null)
-  const [data, setData] = useState([]);
-  // console.log(data[0].itemData.variations)
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("../api/catalog/search", {});
-      console.log(res);
-      setData(res.data.items);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleClick = async (e) => {
-    setOpen(true)
-    // try {
-    //   const res = await axios.post("../api/catalog/search", {});
-    //   console.log(res);
-    //   setData(res.data.items);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  };
 
   return (
-    <div className="w-full ml-[200px]">
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <div className="mb-6 flex justify-between items-end">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-              Inventry
-            </h2>
-            <p className="text-gray-500 mt-2">
-              A list of all the product in your store to update item quantity.
-            </p>
-          </div>
-          <button
-            onClick={handleSubmit}
-            className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Add Inventry
-          </button>
-        </div>
-        <table class="w-full text-left table-auto">
-          <thead>
-            <tr className="border-b text-gray-500">
-              <th className="py-4">Category</th>
-              <th className="py-4">Size</th>
-              <th className="py-4">Color</th>
-              <th className="py-4">Price</th>
-              <th className="py-4">Quantity</th>
-              <th className="py-4">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data ? (
-              data[0]?.itemData.variations.map((item) => (
-                <tr className="border-b" key={item.id}>
-                  <td className="py-4">Shirt</td>
-                  <td className="py-4 text-gray-500">
-                    {item.itemVariationData.name.split(",")[0]}
-                  </td>
-                  <td className="py-4 text-gray-500">
-                    {item.itemVariationData.name.split(",")[1].trim()}
-                  </td>
-                  <td className="py-4 text-gray-500">${item.itemVariationData.priceMoney.amount}</td>
-                  <td className="py-4 text-gray-500">25</td>
-                  <Link href="#">
-                    <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                      <button onClick={handleClick}>Edit</button>
-                    </td>
-                  </Link>
-                </tr>
-              ))
-            ) : (
-              <p>no data</p>
-            )}
-          </tbody>
-        </table>
-        <Transition.Root show={open} as={Fragment}>
+    <Transition.Root show={open} as={Fragment} onClick={props.toggle}>
       <Dialog as="div" className="relative z-10" initialFocus={cancelButtonRef} onClose={setOpen}>
         <Transition.Child
           as={Fragment}
@@ -154,17 +75,5 @@ export default function Inventry() {
         </div>
       </Dialog>
     </Transition.Root>
-        {data && <pre>{JSON.stringify(data, null, 4)}</pre>}
-      </div>
-    </div>
-  );
+  )
 }
-
-Inventry.getLayout = function PageLayout(page) {
-  return (
-    <div className="flex mx-auto w-full">
-      <Siderbar />
-      {page}
-    </div>
-  );
-};

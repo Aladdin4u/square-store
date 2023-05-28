@@ -1,5 +1,4 @@
 import { Client } from "square";
-import { randomUUID } from "crypto";
 
 const { catalogApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -10,7 +9,7 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const response = await catalogApi.searchCatalogItems({
-        textFilter: "Medium",
+        textFilter: "Shirt",
         productTypes: ["REGULAR"],
       });
 

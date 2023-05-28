@@ -15,7 +15,7 @@ export default function Siderbar() {
             <Link href="/admin/dashboard">Catalog</Link>
           </li>
           <li className="mt-4 text-base text-gray-900 hover:text-gray-500 cursor-pointer">
-            <Link href="/admin/items">Add Inventry</Link>
+            <Link href="/admin/inventry">Add Inventry</Link>
           </li>
           <li className="mt-4 text-base text-gray-900 hover:text-gray-500 cursor-pointer">
             <Link href="/admin/items">Item</Link>
