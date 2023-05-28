@@ -118,8 +118,8 @@ export default function CreateCatalog() {
     setVariation((prevVariation) =>
       prevVariation.filter((arr) => arr.id !== id)
     );
-    setColor((prevColor) => prevColor.filter((arr) => arr.id !== sizeId));
-    setSize((prevSize) => prevSize.filter((arr) => arr.id !== colorId));
+    setSize((prevSize) => prevSize.filter((arr) => arr.id !== sizeId));
+    setColor((prevColor) => prevColor.filter((arr) => arr.id !== colorId));
   };
   
   const handleSubmit = async (e) => {
@@ -130,6 +130,7 @@ export default function CreateCatalog() {
       variation: variation,
       color: color,
       Size: size,
+      image: files
     };
     console.log(body);
     // try {
@@ -221,11 +222,11 @@ export default function CreateCatalog() {
           <h2>Add product variation</h2>
           {variation.length > 0 && (
             <>
-              <pre>{JSON.stringify(variation, null, 4)}</pre>
+              {/* <pre>{JSON.stringify(variation, null, 4)}</pre> */}
               {variation.map((arr, i) => (
                 <EditVaraiation
                   key={arr.id}
-                  name={arr.name}
+                  id={arr.id}
                   amount={arr.itemVariationData.priceMoney.amount}
                   delete={() => deleteVaraiation(arr.id, arr.itemVariationData.itemOptionValues[0].itemOptionValueId
                     , arr.itemVariationData.itemOptionValues[1].itemOptionValueId

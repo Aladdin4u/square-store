@@ -1,13 +1,17 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 export default function EditVaraiation(props) {
+  const str = props.id
   return (
     <div className="w-full flex justify-between items-end gap-4">
       <div className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-        {props.name}
+        {props.amount}
       </div>
       <div className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-        {props.amount}
+        {str.split("_")[2]}
+      </div>
+      <div className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        {str.split("_")[3]}
       </div>
       <div
         onClick={props.delete}
