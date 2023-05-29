@@ -7,8 +7,10 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import Cart from "./cart";
 
 export default function Navbar() {
+  const [open, setOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -37,8 +39,8 @@ export default function Navbar() {
           <Link href="/" className="text-sm font-semibold leading-6 text-gray-900">
             <MagnifyingGlassIcon className="h-6 w-6" />
           </Link>
-          <Link
-            href="/"
+          <div
+            onClick={() => setOpen(true)}
             className="text-sm font-semibold leading-6 text-gray-900 relative"
           >
             <ShoppingCartIcon className="h-6 w-6" />{" "}
@@ -48,7 +50,7 @@ export default function Navbar() {
             >
               0
             </span>
-          </Link>
+          </div>
         </div>
       </nav>
       <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -108,6 +110,11 @@ export default function Navbar() {
           </div>
         </Dialog.Panel>
       </Dialog>
+      <Cart
+        open={open}
+        close={setOpen}
+        onClose={() => setOpen(false)}
+      />
     </header>
   );
 }

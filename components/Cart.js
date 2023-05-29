@@ -27,12 +27,12 @@ const products = [
   // More products...
 ]
 
-export default function Cart() {
+export default function Cart(props) {
   const [open, setOpen] = useState(true)
 
   return (
-    <Transition.Root show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={setOpen}>
+    <Transition.Root show={props.open} as={Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={props.close}>
         <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
@@ -66,7 +66,7 @@ export default function Cart() {
                           <button
                             type="button"
                             className="-m-2 p-2 text-gray-400 hover:text-gray-500"
-                            onClick={() => setOpen(false)}
+                            onClick={props.onClose}
                           >
                             <span className="sr-only">Close panel</span>
                             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -137,7 +137,7 @@ export default function Cart() {
                           <button
                             type="button"
                             className="font-medium text-indigo-600 hover:text-indigo-500"
-                            onClick={() => setOpen(false)}
+                            onClick={props.onClose}
                           >
                             Continue Shopping
                             <span aria-hidden="true"> &rarr;</span>
