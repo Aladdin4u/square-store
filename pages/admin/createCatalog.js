@@ -118,22 +118,22 @@ export default function CreateCatalog() {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const body = {
+    const newCatalog = {
       name: formData.name,
       description: formData.description,
       variation: variation,
       color: color,
-      Size: size,
+      size: size,
       image: files
     };
     console.log(body);
-    // try {
-    //   const res = await axios.post("../api/catalog/additemqty", {});
-    //   console.log(res);
-    //   setData(res)
-    // } catch (error) {
-    //   console.log(error)
-    // }
+    try {
+      const res = await axios.post("../api/catalog/additemqty", {newCatalog});
+      console.log(res);
+      setData(res)
+    } catch (error) {
+      console.log(error)
+    }
   };
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">

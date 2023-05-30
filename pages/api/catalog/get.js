@@ -9,9 +9,6 @@ export default async function handler(req, res) {
   try {
     const response = await catalogApi.listCatalog();
 
-    // console.log(response.map((res) => toObject(res)));
-    // res.json(response.result.toString());
-
     return res.json(
       JSON.parse(
         JSON.stringify(

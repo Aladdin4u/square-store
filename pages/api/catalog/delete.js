@@ -6,12 +6,11 @@ const { catalogApi } = new Client({
 });
 
 export default async function handler(req, res) {
+  const { id } = req.body;
+  req.body.newCatalog;
   if (req.method === "POST") {
     try {
-      const response = await catalogApi.searchCatalogItems({
-        textFilter: "Shirt",
-        productTypes: ["REGULAR"],
-      });
+      const response = await catalogApi.deleteCatalogObject(id);
 
       console.log(response.result);
       res.json(

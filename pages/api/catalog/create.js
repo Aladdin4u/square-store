@@ -1,232 +1,98 @@
-import { Client } from 'square';
-import { randomUUID } from 'crypto';
+import { Client, ApiError } from "square";
+import { randomUUID } from "crypto";
 
 const { catalogApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
-  environment: 'sandbox'
+  environment: "sandbox",
 });
 
 export default async function handler(req, res) {
-  
-  if ( req.method === 'POST' ) {
+  const { name, description, variation, color, size, image } =
+    req.body.newCatalog;
+  if (req.method === "POST") {
     try {
-      const response = await catalogApi.batchUpsertCatalogObjects({
+      const file = new FileWrapper(fs.createReadStream(image));
+      const product = await catalogApi.batchUpsertCatalogObjects({
         idempotencyKey: randomUUID(),
         batches: [
           {
             objects: [
               {
-                type: 'ITEM_OPTION',
-                id: '#item_option_color',
+                type: "ITEM_OPTION",
+                id: "#item_option_color",
                 itemOptionData: {
-                  name: 'COLOR_OPTIONS',
-                  values: [
-                    {
-                      type: 'ITEM_OPTION_VAL',
-                      id: '#item_option_value_color_red',
-                      itemOptionValueData: {
-                        name: 'RED'
-                      }
-                    },
-                    {
-                      type: 'ITEM_OPTION_VAL',
-                      id: '#item_option_value_color_blue',
-                      itemOptionValueData: {
-                        name: 'Blue'
-                      }
-                    }
-                  ]
-                }
+                  name: "COLOR_OPTIONS",
+                  values: color,
+                },
               },
               {
-                type: 'ITEM_OPTION',
-                id: '#item_option_size',
+                type: "ITEM_OPTION",
+                id: "#item_option_size",
                 itemOptionData: {
-                  name: 'SIZE_OPTIONS',
-                  values: [
-                    {
-                      type: 'ITEM_OPTION_VAL',
-                      id: '#item_option_value_size_small',
-                      itemOptionValueData: {
-                        name: 'Small'
-                      }
-                    },
-                    {
-                      type: 'ITEM_OPTION_VAL',
-                      id: '#item_option_value_size_medium',
-                      itemOptionValueData: {
-                        name: 'Medium'
-                      }
-                    },
-                    {
-                      type: 'ITEM_OPTION_VAL',
-                      id: '#item_option_value_size_large',
-                      itemOptionValueData: {
-                        name: 'Large'
-                      }
-                    }
-                  ]
-                }
+                  name: "SIZE_OPTIONS",
+                  values: size,
+                },
               },
               {
-                type: 'ITEM',
-                id: '#item',
+                type: "ITEM",
+                id: "#item",
                 itemData: {
-                  name: 'Shirt',
-                  variations: [
-                    {
-                      type: 'ITEM_VARIATION',
-                      id: '#item_variation_small_red',
-                      itemVariationData: {
-                        pricingType: 'FIXED_PRICING',
-                        priceMoney: {
-                          amount: 2500,
-                          currency: 'USD'
-                        },
-                        itemOptionValues: [
-                          {
-                            itemOptionId: '#item_option_size',
-                            itemOptionValueId: '#item_option_value_size_small'
-                          },
-                          {
-                            itemOptionId: '#item_option_color',
-                            itemOptionValueId: '#item_option_value_color_red'
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      type: 'ITEM_VARIATION',
-                      id: '#item_variation_medium_red',
-                      itemVariationData: {
-                        pricingType: 'FIXED_PRICING',
-                        priceMoney: {
-                          amount: 3000,
-                          currency: 'USD'
-                        },
-                        itemOptionValues: [
-                          {
-                            itemOptionId: '#item_option_size',
-                            itemOptionValueId: '#item_option_value_size_medium'
-                          },
-                          {
-                            itemOptionId: '#item_option_color',
-                            itemOptionValueId: '#item_option_value_color_red'
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      type: 'ITEM_VARIATION',
-                      id: '#item_variation_large_red',
-                      itemVariationData: {
-                        pricingType: 'FIXED_PRICING',
-                        priceMoney: {
-                          amount: 3500,
-                          currency: 'USD'
-                        },
-                        itemOptionValues: [
-                          {
-                            itemOptionId: '#item_option_size',
-                            itemOptionValueId: '#item_option_value_size_large'
-                          },
-                          {
-                            itemOptionId: '#item_option_color',
-                            itemOptionValueId: '#item_option_value_color_red'
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      type: 'ITEM_VARIATION',
-                      id: '#item_variation_small_blue',
-                      itemVariationData: {
-                        pricingType: 'FIXED_PRICING',
-                        priceMoney: {
-                          amount: 2500,
-                          currency: 'USD'
-                        },
-                        itemOptionValues: [
-                          {
-                            itemOptionId: '#item_option_size',
-                            itemOptionValueId: '#item_option_value_size_small'
-                          },
-                          {
-                            itemOptionId: '#item_option_color',
-                            itemOptionValueId: '#item_option_value_color_blue'
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      type: 'ITEM_VARIATION',
-                      id: '#item_variation_medium_blue',
-                      itemVariationData: {
-                        pricingType: 'FIXED_PRICING',
-                        priceMoney: {
-                          amount: 3000,
-                          currency: 'USD'
-                        },
-                        itemOptionValues: [
-                          {
-                            itemOptionId: '#item_option_size',
-                            itemOptionValueId: '#item_option_value_size_medium'
-                          },
-                          {
-                            itemOptionId: '#item_option_color',
-                            itemOptionValueId: '#item_option_value_color_blue'
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      type: 'ITEM_VARIATION',
-                      id: '#item_variation_large_blue',
-                      itemVariationData: {
-                        pricingType: 'FIXED_PRICING',
-                        priceMoney: {
-                          amount: 3500,
-                          currency: 'USD'
-                        },
-                        itemOptionValues: [
-                          {
-                            itemOptionId: '#item_option_size',
-                            itemOptionValueId: '#item_option_value_size_large'
-                          },
-                          {
-                            itemOptionId: '#item_option_color',
-                            itemOptionValueId: '#item_option_value_color_blue'
-                          }
-                        ]
-                      }
-                    }
-                  ],
-                  productType: 'REGULAR',
+                  name: name,
+                  description: description,
+                  variations: variation,
+                  productType: "REGULAR",
                   itemOptions: [
                     {
-                      itemOptionId: '#item_option_size'
+                      itemOptionId: "#item_option_size",
                     },
                     {
-                      itemOptionId: '#item_option_color'
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        ]
+                      itemOptionId: "#item_option_color",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
       });
-      
-        console.log(response.result);
-        res.json(JSON.parse(
+
+      const response = await catalogApi.createCatalogImage(
+        {
+          idempotencyKey: "{UNIQUE_KEY}",
+          objectId: product.id,
+          image: {
+            type: "IMAGE",
+            id: "#image_id",
+            imageData: {
+              name: "Image name 1",
+              caption: "Image caption 1",
+            },
+          },
+        },
+        file
+      );
+
+      console.log(response.result);
+      res.json(
+        JSON.parse(
           JSON.stringify(
             response.result,
-            (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+            (key, value) =>
+              typeof value === "bigint" ? value.toString() : value // return everything else unchanged
           )
-        ))
-      } catch(error) {
-        console.log(error);
+        )
+      );
+    } catch (error) {
+      if (error instanceof ApiError) {
+        error.result.errors.forEach(function (e) {
+          console.log(e.category);
+          console.log(e.code);
+          console.log(e.detail);
+        });
+      } else {
+        console.log("Unexpected error occurred: ", error);
       }
+    }
   } else {
     res.status(500).send();
   }

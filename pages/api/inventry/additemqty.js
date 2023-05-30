@@ -1,4 +1,4 @@
-import { Client } from "square";
+import { Client, ApiError } from "square";
 import { randomUUID } from "crypto";
 
 const { inventoryApi } = new Client({
@@ -8,7 +8,7 @@ const { inventoryApi } = new Client({
 
 export default async function handler(req, res) {
   const { id, quantity } = req.body.formData;
-  console.log(id , quantity);
+  console.log(id, quantity);
   if (req.method === "POST") {
     try {
       const response = await inventoryApi.batchChangeInventory({
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
               quantity: quantity,
               occurredAt: new Date().toISOString(),
             },
-          }
+          },
         ],
       });
 
@@ -39,7 +39,15 @@ export default async function handler(req, res) {
         )
       );
     } catch (error) {
-      console.log(error);
+      if (error instanceof ApiError) {
+        error.result.errors.forEach(function (e) {
+          console.log(e.category);
+          console.log(e.code);
+          console.log(e.detail);
+        });
+      } else {
+        console.log("Unexpected error occurred: ", error);
+      }
     }
   } else {
     res.status(500).send();
