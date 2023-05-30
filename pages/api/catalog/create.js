@@ -7,12 +7,11 @@ const { catalogApi } = new Client({
 });
 
 export default async function handler(req, res) {
-  const { name, description, variation, color, size, image } =
+  const { name, description, variation, color, size, images } =
     req.body.newCatalog;
   if (req.method === "POST") {
     try {
-      const file = new FileWrapper(fs.createReadStream(image));
-      const product = await catalogApi.batchUpsertCatalogObjects({
+      const response = await catalogApi.batchUpsertCatalogObjects({
         idempotencyKey: randomUUID(),
         batches: [
           {
@@ -49,29 +48,14 @@ export default async function handler(req, res) {
                       itemOptionId: "#item_option_color",
                     },
                   ],
+                  image_ids: images,
                 },
               },
             ],
           },
         ],
       });
-
-      const response = await catalogApi.createCatalogImage(
-        {
-          idempotencyKey: "{UNIQUE_KEY}",
-          objectId: product.id,
-          image: {
-            type: "IMAGE",
-            id: "#image_id",
-            imageData: {
-              name: "Image name 1",
-              caption: "Image caption 1",
-            },
-          },
-        },
-        file
-      );
-
+      
       console.log(response.result);
       res.json(
         JSON.parse(

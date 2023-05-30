@@ -124,7 +124,7 @@ export default function CreateCatalog() {
       variation: variation,
       color: color,
       size: size,
-      image: files
+      images: files
     };
     console.log(body);
     try {

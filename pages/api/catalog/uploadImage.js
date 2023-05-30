@@ -1,5 +1,6 @@
-import { Client, ApiError } from "square";
+import { Client, ApiError, FileWrapper } from "square";
 import { randomUUID } from "crypto";
+const fs = require("fs");
 
 const { catalogApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -7,11 +8,11 @@ const { catalogApi } = new Client({
 });
 
 export default async function handler(req, res) {
-  const {img} = req.body.img;
-  console.log(img)
+  const {id, img, name, caption} = req.body.image;
   if (req.method === "POST") {
+    // console.log(req.body)
     try {
-      const file = new FileWrapper(fs.createReadStream(image));
+      const file = new FileWrapper(fs.createReadStream(img));
 
       const response = await catalogApi.createCatalogImage(
         {
@@ -19,10 +20,10 @@ export default async function handler(req, res) {
           objectId: id,
           image: {
             type: "IMAGE",
-            id: "#image_id",
+            id: id,
             imageData: {
-              name: "Image name 1",
-              caption: "Image caption 1",
+              name: name,
+              caption: caption,
             },
           },
         },
