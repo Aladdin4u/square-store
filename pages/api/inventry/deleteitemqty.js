@@ -1,4 +1,4 @@
-import { Client } from 'square';
+import { Client, ApiError } from 'square';
 import { randomUUID } from 'crypto';
 
 const { inventoryApi } = new Client({
@@ -37,7 +37,15 @@ export default async function handler(req, res) {
         )
       );
     } catch(error) {
-      console.log(error);
+      if (error instanceof ApiError) {
+        error.result.errors.forEach(function (e) {
+          console.log(e.category);
+          console.log(e.code);
+          console.log(e.detail);
+        });
+      } else {
+        console.log("Unexpected error occurred: ", error);
+      }
     }
   } else {
     res.status(500).send();

@@ -1,4 +1,5 @@
-import { Client, ApiError } from "square";
+import { Client, ApiError, FileWrapper } from "square";
+import { randomUUID } from "crypto";
 
 const { catalogApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -6,12 +7,19 @@ const { catalogApi } = new Client({
 });
 
 export default async function handler(req, res) {
+  const id = req.body.id;
+  console.log(img);
   if (req.method === "POST") {
     try {
-      const response = await catalogApi.searchCatalogItems({
-        textFilter: "Shirt",
-        productTypes: ["REGULAR"],
-      });
+      const file = new FileWrapper(fs.createReadStream(id));
+
+      const response = await client.catalogApi.updateCatalogImage(
+        id,
+        {
+          idempotencyKey: randomUUID(),
+        },
+        file
+      );
 
       console.log(response.result);
       res.json(
