@@ -1,29 +1,53 @@
 import { Client, ApiError, FileWrapper } from "square";
 import { randomUUID } from "crypto";
-const fs = require("fs");
+import fs from "fs";
+import formidable from 'formidable';
+import { resolve } from "path";
 
 const { catalogApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
   environment: "sandbox",
 });
 
-export default async function handler(req, res) {
-  const {id, img, name, caption} = req.body.image;
-  if (req.method === "POST") {
-    // console.log(req.body)
-    try {
-      const file = new FileWrapper(fs.createReadStream(img));
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
+const readFile = (req) => {
+  const form = formidable();
+  return new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+        reject(err);
+      }
+      resolve({ fields, files });
+    });
+  })
+}
+
+export default async function handler(req, res) {
+  
+  if (req.method === "POST") {
+    const {fields, files} = await readFile(req)
+    console.log("files ==>",fields.body, "testts",files)
+    console.log("files4 ==>",files.image)
+    res.json({files, fields})
+    try {
+      const file = new FileWrapper(fs.createReadStream(files.image, {
+        contentType: 'image/jpeg',
+      }));
       const response = await catalogApi.createCatalogImage(
         {
           idempotencyKey: randomUUID(),
           objectId: id,
           image: {
             type: "IMAGE",
-            id: id,
+            id: "#image_id",
             imageData: {
-              name: name,
-              caption: caption,
+              name: "image_name",
+              caption: "Image_caption",
             },
           },
         },

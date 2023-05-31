@@ -5,38 +5,44 @@ import Siderbar from "../../components/Sidebar";
 import { CameraIcon } from "@heroicons/react/24/outline";
 
 export default function UploadImage() {
-  const [files, setFiles] = useState();
-  const [data, setData] = useState("");
-  console.log(data);
+  const [image, setImage] = useState(null);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-    console.log("useffect", files);
+    if(!image) return;
+    console.log("useffect", image);
     const uploadImage = async () => {
       try {
-        const image = {
-          img: files[0],
-          id: `#image_${files[0].name.split(".")[0]}`,
-          name: `${files[0].name.split(".")[0]}`,
-          caption: `${files[0].name.split(".")[0]}_caption`,
-        };
-        console.log(image);
-        const res = await axios.post("../api/catalog/uploadImage", { image });
+        const body = new FormData();
+        body.append("images", image);
+        console.log(...body);
+        const res = await axios.post(
+          "../api/catalog/uploadImage",
+          {
+            image,
+          },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         console.log(res);
-        setFiles([])
-        console.log("deleted",files);
+        setImage(null);
+        console.log("deleted", image);
       } catch (error) {
         console.log(error);
       }
     };
-    if(files) {
+    if (image) {
       console.log("good!");
       uploadImage();
     }
-  }, [files]);
+  }, [image]);
 
   const replaceImage = async (id) => {
     try {
-      const res = await axios.post("../api/catalog/replaceImage", { id});
+      const res = await axios.post("../api/catalog/replaceImage", { id });
       console.log(res);
       setData(res);
     } catch (error) {
@@ -58,21 +64,21 @@ export default function UploadImage() {
         <div className="border-2 border-dashed rounded py-6 flex flex-col justify-center items-center">
           <div className="mt-2 flex justify-between items-center">
             <input
-              id="files"
-              name="files"
+              id="image"
+              name="image"
               type="file"
               accept="image/*"
-              onChange={(e) => setFiles(e.target.files)}
+              onChange={(e) => setImage(e.target.files[0])}
               className="hidden"
             />
             <div className="border h-24 w-24 bg-gray-300 rounded-full overflow-hidden flex justify-center items-center">
-              <label htmlFor="files">
+              <label htmlFor="image">
                 <CameraIcon className="h-6 w-6" aria-hidden="true" />
               </label>
             </div>
           </div>
           <label
-            htmlFor="files"
+            htmlFor="image"
             className="block text-sm font-medium leading-6 text-gray-900"
           >
             Upload Image
@@ -88,33 +94,32 @@ export default function UploadImage() {
             </thead>
             <tbody className="divide-y">
               {data.map((item) => (
-                  <tr key={item.id}>
-                    <td className="py-4 text-gray-500">
-                      <Image
-                        src="/images/logan-weaver.jpg"
-                        width={300}
-                        height={300}
-                        alt="catalog image"
-                        className="h-8 w-8 rounded-full object-cover overflow"
-                        unoptimized
-                      />
-                    </td>
-                    <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                      <button onClick={() => replaceImage(item.id)}>Edit</button>
-                    </td>
-                    <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                      <button onClick={() => deleteImage(item.id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              }
+                <tr key={item.id}>
+                  <td className="py-4 text-gray-500">
+                    <Image
+                      src="/images/logan-weaver.jpg"
+                      width={300}
+                      height={300}
+                      alt="catalog image"
+                      className="h-8 w-8 rounded-full object-cover overflow"
+                      unoptimized
+                    />
+                  </td>
+                  <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
+                    <button onClick={() => replaceImage(item.id)}>Edit</button>
+                  </td>
+                  <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
+                    <button onClick={() => deleteImage(item.id)}>Delete</button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-        ) :
-        <p className="mt-6 text-center">No catalog image, &quot;click the icon above to add one&quot; </p>
-        }
+        ) : (
+          <p className="mt-6 text-center">
+            No catalog image, &quot;click the icon above to add one&quot;{" "}
+          </p>
+        )}
       </div>
     </div>
   );
