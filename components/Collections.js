@@ -28,7 +28,7 @@ const products = [
     name: "Sweatshirts",
     href: "#",
     imageSrc:
-      "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
+      "/images/sweatshirt.jpg",
     imageAlt: "Front of men's Basic Tee in black.",
   },
   {
@@ -36,7 +36,7 @@ const products = [
     name: "Shirt",
     href: "#",
     imageSrc:
-      "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
+      "/images/shirt.jpg",
     imageAlt: "Front of men's Basic Tee in black.",
   },
   {
@@ -44,7 +44,7 @@ const products = [
     name: "T-Shirt",
     href: "#",
     imageSrc:
-      "/images/logan-weaver.jpg",
+      "/images/t-shirt.jpg",
     imageAlt: "Front of men's Basic Tee in black.",
   },
   {
@@ -52,7 +52,7 @@ const products = [
     name: "Jackets",
     href: "#",
     imageSrc:
-      "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
+      "/images/jacket.jpg",
     imageAlt: "Front of men's Basic Tee in black.",
   },
   // More products...
