@@ -3,6 +3,10 @@ import Image from "next/image";
 import axios from "axios";
 import EditVaraiation from "../../components/EditVaraition";
 import { CameraIcon } from "@heroicons/react/24/outline";
+import {Editor, EditorState, RichUtils,
+  convertToRaw,
+  convertFromRaw} from 'draft-js';
+import 'draft-js/dist/Draft.css';
 
 export default function CreateCatalog() {
   const [data, setData] = useState([]);
@@ -11,6 +15,9 @@ export default function CreateCatalog() {
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
   const [files, setFiles] = useState("");
+  const [editorState, setEditorState] = useState(
+    () => EditorState.createEmpty(),
+  );
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -202,7 +209,7 @@ export default function CreateCatalog() {
               Product Description
             </label>
             <div className="mt-2">
-              <input
+              <textarea
                 id="description"
                 name="description"
                 type="text"
@@ -213,6 +220,7 @@ export default function CreateCatalog() {
               />
             </div>
           </div>
+          <Editor editorState={editorState} onChange={setEditorState} />
           <h2>Add product variation</h2>
           {variation.length > 0 && (
             <>

@@ -37,7 +37,7 @@ export default async function handler(req, res) {
                 id: "#item",
                 itemData: {
                   name: name,
-                  description: description,
+                  descriptionHtml: description,
                   variations: variation,
                   productType: "REGULAR",
                   itemOptions: [
