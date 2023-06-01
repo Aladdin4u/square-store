@@ -1,8 +1,7 @@
 import { Client, ApiError, FileWrapper } from "square";
 import { randomUUID } from "crypto";
-import fs from "fs";
 import formidable from 'formidable';
-import { resolve } from "path";
+import fs from "fs";
 
 const { catalogApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -16,12 +15,14 @@ export const config = {
 };
 
 const readFile = (req) => {
-  const form = formidable();
+  const options = {};
+    options.filename = (name, ext, path, form) => {
+      return path.originalFilename;
+    };
+  const form = formidable(options);
   return new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
-      if (err) {
-        reject(err);
-      }
+      if (err) reject(err);
       resolve({ fields, files });
     });
   })
@@ -31,23 +32,22 @@ export default async function handler(req, res) {
   
   if (req.method === "POST") {
     const {fields, files} = await readFile(req)
-    console.log("files ==>",fields.body, "testts",files)
-    console.log("files4 ==>",files.image)
-    res.json({files, fields})
+    const filepath = files.image.filepath
+    const imagesize = files.image.size
+    const imageData = files.image.originalFilename.split(".")[0]
+    console.log(files.image.originalFilename.split(".")[0], imagesize, filepath)
+    // res.json({ done: "ok", fields, files});
     try {
-      const file = new FileWrapper(fs.createReadStream(files.image, {
-        contentType: 'image/jpeg',
-      }));
+      const file = new FileWrapper(fs.createReadStream(filepath));
       const response = await catalogApi.createCatalogImage(
         {
           idempotencyKey: randomUUID(),
-          objectId: id,
           image: {
             type: "IMAGE",
-            id: "#image_id",
+            id: `#image_${imagesize}`,
             imageData: {
-              name: "image_name",
-              caption: "Image_caption",
+              name: `${imageData}`,
+              caption: `${imageData}`,
             },
           },
         },

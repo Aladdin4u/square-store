@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     try {
       const file = new FileWrapper(fs.createReadStream(id));
 
-      const response = await client.catalogApi.updateCatalogImage(
+      const response = await catalogApi.updateCatalogImage(
         id,
         {
           idempotencyKey: randomUUID(),

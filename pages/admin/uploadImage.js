@@ -13,13 +13,10 @@ export default function UploadImage() {
     console.log("useffect", image);
     const uploadImage = async () => {
       try {
-        const body = new FormData();
-        body.append("images", image);
-        console.log(...body);
         const res = await axios.post(
           "../api/catalog/uploadImage",
           {
-            image,
+            image
           },
           {
             headers: {
@@ -31,6 +28,7 @@ export default function UploadImage() {
         setImage(null);
         console.log("deleted", image);
       } catch (error) {
+        setImage(null);
         console.log(error);
       }
     };
