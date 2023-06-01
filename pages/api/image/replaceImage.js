@@ -31,25 +31,16 @@ const readFile = (req) => {
 export default async function handler(req, res) {
   
   if (req.method === "POST") {
-    const {fields, files} = await readFile(req)
+    const { fields, files } = await readFile(req)
     const filepath = files.image.filepath
-    const imagesize = files.image.size
-    const imageData = files.image.originalFilename.split(".")[0]
-    console.log(files.image.originalFilename.split(".")[0], imagesize, filepath)
-    // res.json({ done: "ok", fields, files});
+    const id = fields.id
     try {
       const file = new FileWrapper(fs.createReadStream(filepath));
-      const response = await catalogApi.createCatalogImage(
+
+      const response = await catalogApi.updateCatalogImage(
+        id,
         {
           idempotencyKey: randomUUID(),
-          image: {
-            type: "IMAGE",
-            id: `#image_${imagesize}`,
-            imageData: {
-              name: `${imageData}`,
-              caption: `${imageData}`,
-            },
-          },
         },
         file
       );

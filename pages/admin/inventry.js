@@ -1,7 +1,5 @@
 import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import Siderbar from "../../components/Sidebar";
 import axios from "axios";
 
