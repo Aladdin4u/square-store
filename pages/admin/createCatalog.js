@@ -1,34 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import axios from "axios";
 import EditVaraiation from "../../components/EditVaraition";
+import DraftEditor from "../../components/DraftEditor";
 import { CameraIcon } from "@heroicons/react/24/outline";
-import {Editor, EditorState, RichUtils,
-  convertToRaw,
-  convertFromRaw} from 'draft-js';
-import 'draft-js/dist/Draft.css';
 
 export default function CreateCatalog() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(null);
+  const [image, setImage] = useState(null);
   const [error, setError] = useState(false);
   const [variation, setVariation] = useState([]);
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
   const [files, setFiles] = useState("");
-  const [editorState, setEditorState] = useState(
-    () => EditorState.createEmpty(),
-  );
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     amount: "",
     color: "",
     size: "",
+    image: false,
   });
-  console.log("formdata ===",formData);
-  console.log("varation ===",variation);
+  console.log("formdata ===", formData);
+  console.log("varation ===", variation);
   console.log("color ===", color);
-  console.log("size ===",size);
+  console.log("size ===", size);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       const { name, value, type, checked } = e.target;
@@ -38,6 +34,17 @@ export default function CreateCatalog() {
       };
     });
   };
+  useEffect(() => {
+    const getImage = async () => {
+      try {
+        const res = await axios.get("../api/image/getImage");
+        setImage(res.data.objects);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getImage();
+  }, []);
   const submitVaration = (e) => {
     e.preventDefault();
     const newVariation = {
@@ -76,28 +83,25 @@ export default function CreateCatalog() {
         name: `${formData.size}`,
       },
     };
-    if (!formData.color || !formData.size|| !formData.amount) {
+    if (!formData.color || !formData.size || !formData.amount) {
       return alert("enter product variation values");
     }
-    
 
-    if(variation.find(x => x.id === newVariation.id)) {
+    if (variation.find((x) => x.id === newVariation.id)) {
       return setError(true);
     } else {
       setVariation((prevVariation) => {
         return [...prevVariation, newVariation];
       });
-
     }
-    if(color.find(x => x.id === newColor.id)) {
+    if (color.find((x) => x.id === newColor.id)) {
       return setError(true);
     } else {
       setColor((prevColor) => {
         return [...prevColor, newColor];
       });
-
     }
-    if(size.find(x => x.id == newSize.id)) {
+    if (size.find((x) => x.id == newSize.id)) {
       return setError(true);
     } else {
       setSize((prevSize) => {
@@ -112,7 +116,7 @@ export default function CreateCatalog() {
         amount: "",
       };
     });
-    setError(false)
+    setError(false);
   };
 
   const deleteVaraiation = (id, sizeId, colorId) => {
@@ -122,7 +126,7 @@ export default function CreateCatalog() {
     setSize((prevSize) => prevSize.filter((arr) => arr.id !== sizeId));
     setColor((prevColor) => prevColor.filter((arr) => arr.id !== colorId));
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newCatalog = {
@@ -131,15 +135,15 @@ export default function CreateCatalog() {
       variation: variation,
       color: color,
       size: size,
-      images: files
+      images: files,
     };
     console.log(body);
     try {
-      const res = await axios.post("../api/catalog/additemqty", {newCatalog});
+      const res = await axios.post("../api/catalog/additemqty", { newCatalog });
       console.log(res);
-      setData(res)
+      setData(res);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
   return (
@@ -220,7 +224,7 @@ export default function CreateCatalog() {
               />
             </div>
           </div>
-          <Editor editorState={editorState} onChange={setEditorState} />
+          <DraftEditor />
           <h2>Add product variation</h2>
           {variation.length > 0 && (
             <>
@@ -230,15 +234,20 @@ export default function CreateCatalog() {
                   key={arr.id}
                   id={arr.id}
                   amount={arr.itemVariationData.priceMoney.amount}
-                  delete={() => deleteVaraiation(arr.id, arr.itemVariationData.itemOptionValues[0].itemOptionValueId
-                    , arr.itemVariationData.itemOptionValues[1].itemOptionValueId
-                    )}
+                  delete={() =>
+                    deleteVaraiation(
+                      arr.id,
+                      arr.itemVariationData.itemOptionValues[0]
+                        .itemOptionValueId,
+                      arr.itemVariationData.itemOptionValues[1]
+                        .itemOptionValueId
+                    )
+                  }
                 />
               ))}
             </>
           )}
           <div className="w-full flex justify-between items-end gap-4">
-
             <div>
               <div>
                 <label
@@ -314,11 +323,66 @@ export default function CreateCatalog() {
             <button
               onClick={submitVaration}
               className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
+            >
               Add
             </button>
           </div>
-              {error && <p className="max-w-sm text-sm text-red-600 text-center bg-red-300 rounded">enter a valid product variations</p>}
+          {error && (
+            <p className="max-w-sm text-sm text-red-600 text-center bg-red-300 rounded">
+              enter a valid product variations
+            </p>
+          )}
+          <div className="w-full h-96 overflow-auto">
+            {image ? (
+              <table className="mt-6 divide-y w-full text-left table-fixed">
+                <thead>
+                  <tr className="text-gray-500">
+                    <th className="py-4">Name</th>
+                    <th className="py-4">Image</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {image.map((item) => (
+                    <tr key={item.id}>
+                      <td className="py-4 text-gray-500">
+                        {item.imageData.name}
+                      </td>
+                      <td className="py-4 text-gray-500">
+                        <Image
+                          src={item.imageData.url}
+                          width={300}
+                          height={300}
+                          alt="catalog image"
+                          className="h-8 w-8 rounded-full object-cover overflow"
+                          unoptimized
+                        />
+                      </td>
+                      <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
+                        <button onClick={() => handleClick(item.id)}>
+                          Edit
+                        </button>
+                      </td>
+                      <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
+                        <input 
+                          type="checkbox"
+                          id="image"
+                          name="image"
+                          checked={formData.image}
+                          onChange={handleChange}
+
+                        />
+                        <label htmlFor="imag">select</label>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="mt-6 text-center">
+                No catalog image, &quot;click the icon above to add one&quot;{" "}
+              </p>
+            )}
+          </div>
           <div>
             <button
               type="submit"
@@ -334,7 +398,6 @@ export default function CreateCatalog() {
           </div>
         </form>
       </div>
-      {data && <pre>{JSON.stringify(data, null, 4)}</pre>}
     </div>
   );
 }

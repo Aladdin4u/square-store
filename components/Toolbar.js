@@ -20,6 +20,7 @@ import {
   faUnderline,
 } from "@fortawesome/free-solid-svg-icons";
 import { RichUtils } from "draft-js";
+import styles from "../styles/draft.module.css";
 
 export default function Toolbar ({ editorState, setEditorState }) {
   const tools = [
@@ -155,9 +156,10 @@ export default function Toolbar ({ editorState, setEditorState }) {
   };
 
   return (
-    <div className="toolbar-grid">
+    <div className={styles.toolbarGrid}>
       {tools.map((item, idx) => (
         <button
+          className={styles.button}
           style={{
             color: isActive(item.style, item.method)
               ? "rgba(0, 0, 0, 1)"

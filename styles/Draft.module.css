@@ -1,23 +1,23 @@
-.editor-wrapper {
+.editorWrapper {
     width: 768px;
     border: 1px solid black;
     background: #fff;
     padding: 1rem;
   }
   
-  .editor-container {
+  .editorContainer {
     width: 100%;
     border: 1px solid green;
     padding: 1rem;
   }
   
-  .toolbar-grid {
+  .toolbarGrid {
     display: flex;
     flex-wrap: wrap;
     flex-basis: 1fr 1fr;
   }
   
-  button {
+  .button {
     margin-right: 8px;
     font-size: 1rem;
     padding: 10px;

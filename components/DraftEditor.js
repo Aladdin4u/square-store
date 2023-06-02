@@ -7,7 +7,7 @@ import {
   convertFromRaw,
 } from "draft-js";
 import Toolbar from "./Toolbar";
-import "./DraftEditor.css";
+import styles from "../styles/draft.module.css";
 
 export default function DraftEditor() {
   const [editorState, setEditorState] = useState(
@@ -16,7 +16,7 @@ export default function DraftEditor() {
         blocks: [
           {
             key: "3eesq",
-            text: "A Text-editor with super cool features built in Draft.js.",
+            text: "Enter product description here",
             type: "unstyled",
             depth: 0,
             inlineStyleRanges: [
@@ -41,7 +41,7 @@ export default function DraftEditor() {
           },
           {
             key: "9adb5",
-            text: "Tell us a story!",
+            text: "Tell us more about your product",
             type: "header-one",
             depth: 0,
             inlineStyleRanges: [],
@@ -54,6 +54,8 @@ export default function DraftEditor() {
     )
   );
   const editor = useRef(null);
+
+  console.log(editorState)
 
   useEffect(() => {
     focusEditor();
@@ -128,9 +130,9 @@ export default function DraftEditor() {
   };
 
   return (
-    <div className="editor-wrapper" onClick={focusEditor}>
+    <div className={styles.editorWrapper} onClick={focusEditor}>
       <Toolbar editorState={editorState} setEditorState={setEditorState} />
-      <div className="editor-container">
+      <div className={styles.editorContainer}>
         <Editor
           ref={editor}
           placeholder="Write Here"
