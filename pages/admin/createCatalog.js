@@ -4,25 +4,47 @@ import axios from "axios";
 import EditVaraiation from "../../components/EditVaraition";
 import DraftEditor from "../../components/DraftEditor";
 import { CameraIcon } from "@heroicons/react/24/outline";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSquareCheck, faSquare } from "@fortawesome/free-regular-svg-icons";
+import Link from "next/link";
 
 export default function CreateCatalog() {
   const [data, setData] = useState(null);
-  const [image, setImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState([]);
+  const [image, setImage] = useState([
+    {
+      type: "IMAGE",
+      id: "UIL7H6ASIOER7O6HZCL2ASDP",
+      imageData: {
+        name: "health",
+        url: "https://square-catalog-sandbox.s3.amazonaws.com/files/2423540c2dcc9806a323b49b07533e9b917143fc/original.png",
+        caption: "health",
+      },
+    },
+    {
+      type: "IMAGE",
+      id: "7ZQUHUHHDYCJCVIFJ5EQNQMV",
+      imageData: {
+        name: "STOLE PIC",
+        url: "https://square-catalog-sandbox.s3.amazonaws.com/files/8e90ecb2bfd8a46131fa9df46a1fb827f5ae3755/original.jpeg",
+        caption: "STOLE PIC",
+      },
+    },
+  ]);
+  const [checked, setChecked] = useState(false);
   const [error, setError] = useState(false);
   const [variation, setVariation] = useState([]);
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
-  const [files, setFiles] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     amount: "",
     color: "",
     size: "",
-    image: false,
   });
-  console.log("formdata ===", formData);
-  console.log("varation ===", variation);
+  console.log("image ===", image);
+  console.log("seleImg===", selectedImage);
   console.log("color ===", color);
   console.log("size ===", size);
   const handleChange = (e) => {
@@ -34,17 +56,17 @@ export default function CreateCatalog() {
       };
     });
   };
-  useEffect(() => {
-    const getImage = async () => {
-      try {
-        const res = await axios.get("../api/image/getImage");
-        setImage(res.data.objects);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getImage();
-  }, []);
+  // useEffect(() => {
+  //   const getImage = async () => {
+  //     try {
+  //       const res = await axios.get("../api/image/getImage");
+  //       setImage(res.data.objects);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   getImage();
+  // }, []);
   const submitVaration = (e) => {
     e.preventDefault();
     const newVariation = {
@@ -129,63 +151,61 @@ export default function CreateCatalog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newCatalog = {
+    const newproduct = {
       name: formData.name,
       description: formData.description,
       variation: variation,
       color: color,
       size: size,
-      images: files,
+      images: selectedImage,
     };
-    console.log(body);
+    console.log(newproduct);
     try {
-      const res = await axios.post("../api/catalog/additemqty", { newCatalog });
+      const res = await axios.post("../api/catalog/additemqty", { newproduct });
       console.log(res);
       setData(res);
     } catch (error) {
       console.log(error);
     }
   };
+  const handleClick = (id) => {
+    setChecked((prevChecked) => !prevChecked);
+    const findImage = image.find((img) => img.id === id);
+    const findId = selectedImage.find((select) => select === id);
+    if (findImage) {
+      if (findId) {
+        console.log("exsteed");
+        setSelectedImage((prevSelected) =>
+          prevSelected.filter((item) => item !== id)
+        );
+      } else {
+        console.log("addedd!");
+        setSelectedImage((prevSelected) => {
+          return [...prevSelected, id];
+        });
+      }
+    }
+  };
+
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="my-10 sm:mx-auto sm:w-full">
-        <h1>Create Catalog</h1>
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="mb-6 flex justify-between items-end">
           <div>
-            <label
-              htmlFor="files"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Product Image
-            </label>
-            <div className="mt-2 flex justify-between items-center">
-              <input
-                id="files"
-                name="files"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={(e) => setFiles(e.target.files)}
-                className="hidden"
-              />
-              <div className="border h-24 w-24 bg-gray-300 rounded-full overflow-hidden flex justify-center items-center">
-                <label htmlFor="files">
-                  {files && files[0] ? (
-                    <Image
-                      src={URL.createObjectURL(files[0])}
-                      width={300}
-                      height={300}
-                      alt="catalog image"
-                      className="h-24 w-24 object-cover overflow"
-                      unoptimized
-                    />
-                  ) : (
-                    <CameraIcon className="h-6 w-6" aria-hidden="true" />
-                  )}
-                </label>
-              </div>
-            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+              Create New Product
+            </h2>
+            <p className="text-gray-500 mt-2">
+              Add new product to online store.
+            </p>
           </div>
+          <Link href="/admin/uploadImage"
+            className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            add new Image
+          </Link>
+        </div>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="name"
@@ -359,19 +379,13 @@ export default function CreateCatalog() {
                       </td>
                       <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
                         <button onClick={() => handleClick(item.id)}>
-                          Edit
+                          {item.id ===
+                          selectedImage.find((select) => select === item.id) ? (
+                            <FontAwesomeIcon icon={faSquareCheck} />
+                          ) : (
+                            <FontAwesomeIcon icon={faSquare} />
+                          )}
                         </button>
-                      </td>
-                      <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                        <input 
-                          type="checkbox"
-                          id="image"
-                          name="image"
-                          checked={formData.image}
-                          onChange={handleChange}
-
-                        />
-                        <label htmlFor="imag">select</label>
                       </td>
                     </tr>
                   ))}
@@ -379,7 +393,8 @@ export default function CreateCatalog() {
               </table>
             ) : (
               <p className="mt-6 text-center">
-                No catalog image, &quot;click the icon above to add one&quot;{" "}
+                No catalog image found,{" "}
+                <Link href="/admin/uploadImage">add images</Link>
               </p>
             )}
           </div>
