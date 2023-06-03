@@ -1,5 +1,5 @@
 .editorWrapper {
-    width: 768px;
+    width: 100%;
     border: 1px solid black;
     background: #fff;
     padding: 1rem;
@@ -7,7 +7,9 @@
   
   .editorContainer {
     width: 100%;
-    border: 1px solid green;
+    border: 1px solid gray;
+    background: rgba(128, 128, 128, 0.714);
+    color: #fff;
     padding: 1rem;
   }
   

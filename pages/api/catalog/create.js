@@ -20,7 +20,7 @@ export default async function handler(req, res) {
                 type: "ITEM_OPTION",
                 id: "#item_option_color",
                 itemOptionData: {
-                  name: "COLOR_OPTIONS",
+                  name: `COLOR_OPTIONS_${name.toUpperCase()}`,
                   values: color,
                 },
               },
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
                 type: "ITEM_OPTION",
                 id: "#item_option_size",
                 itemOptionData: {
-                  name: "SIZE_OPTIONS",
+                  name: `SIZE_OPTIONS_${name.toUpperCase()}`,
                   values: size,
                 },
               },

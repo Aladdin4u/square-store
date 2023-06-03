@@ -1,61 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Editor,
-  EditorState,
   RichUtils,
   convertToRaw,
-  convertFromRaw,
 } from "draft-js";
 import Toolbar from "./Toolbar";
 import styles from "../styles/draft.module.css";
 
-export default function DraftEditor() {
-  const [editorState, setEditorState] = useState(
-    EditorState.createWithContent(
-      convertFromRaw({
-        blocks: [
-          {
-            key: "3eesq",
-            text: "Enter product description here",
-            type: "unstyled",
-            depth: 0,
-            inlineStyleRanges: [
-              {
-                offset: 19,
-                length: 6,
-                style: "BOLD",
-              },
-              {
-                offset: 25,
-                length: 5,
-                style: "ITALIC",
-              },
-              {
-                offset: 30,
-                length: 8,
-                style: "UNDERLINE",
-              },
-            ],
-            entityRanges: [],
-            data: {},
-          },
-          {
-            key: "9adb5",
-            text: "Tell us more about your product",
-            type: "header-one",
-            depth: 0,
-            inlineStyleRanges: [],
-            entityRanges: [],
-            data: {},
-          },
-        ],
-        entityMap: {},
-      })
-    )
-  );
+export default function DraftEditor({editorState, setEditorState}) {
   const editor = useRef(null);
-
-  console.log(editorState)
 
   useEffect(() => {
     focusEditor();
@@ -115,15 +68,15 @@ export default function DraftEditor() {
     const type = contentBlock.getType();
     switch (type) {
       case "blockQuote":
-        return "superFancyBlockquote";
+        return "border-l-4 border-gray-500 bg-gray-300 italic pl-4";
       case "leftAlign":
-        return "leftAlign";
+        return "text-leftn";
       case "rightAlign":
-        return "rightAlign";
+        return "text-right";
       case "centerAlign":
-        return "centerAlign";
+        return "text-center";
       case "justifyAlign":
-        return "justifyAlign";
+        return "text-justify";
       default:
         break;
     }
@@ -142,7 +95,7 @@ export default function DraftEditor() {
           blockStyleFn={myBlockStyleFn}
           onChange={(editorState) => {
             const contentState = editorState.getCurrentContent();
-            console.log(convertToRaw(contentState));
+            // console.log(convertToRaw(contentState));
             setEditorState(editorState);
           }}
         />

@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import {
+  EditorState,
+  convertToRaw,
+  convertFromRaw,
+} from "draft-js";
 import Image from "next/image";
 import axios from "axios";
 import EditVaraiation from "../../components/EditVaraition";
@@ -9,6 +14,51 @@ import { faSquareCheck, faSquare } from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
 
 export default function CreateCatalog() {
+  const [editorState, setEditorState] = useState(
+    EditorState.createWithContent(
+      convertFromRaw({
+        blocks: [
+          {
+            key: "3eesq",
+            text: "Enter product description here",
+            type: "unstyled",
+            depth: 0,
+            inlineStyleRanges: [
+              {
+                offset: 19,
+                length: 6,
+                style: "BOLD",
+              },
+              {
+                offset: 25,
+                length: 5,
+                style: "ITALIC",
+              },
+              {
+                offset: 30,
+                length: 8,
+                style: "UNDERLINE",
+              },
+            ],
+            entityRanges: [],
+            data: {},
+          },
+          {
+            key: "9adb5",
+            text: "Tell us more about your product",
+            type: "header-one",
+            depth: 0,
+            inlineStyleRanges: [],
+            entityRanges: [],
+            data: {},
+          },
+        ],
+        entityMap: {},
+      })
+    )
+  );
+  const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
+  console.log(content);
   const [data, setData] = useState(null);
   const [selectedImage, setSelectedImage] = useState([]);
   const [image, setImage] = useState([
@@ -38,15 +88,11 @@ export default function CreateCatalog() {
   const [size, setSize] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
     amount: "",
     color: "",
     size: "",
   });
-  console.log("image ===", image);
-  console.log("seleImg===", selectedImage);
-  console.log("color ===", color);
-  console.log("size ===", size);
+  console.log("responsedata ===", data);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       const { name, value, type, checked } = e.target;
@@ -70,10 +116,10 @@ export default function CreateCatalog() {
   const submitVaration = (e) => {
     e.preventDefault();
     const newVariation = {
-      type: "ITEM",
+      type: "ITEM_VARIATION",
       id: `#item_variation_${formData.size.toLowerCase()}_${formData.color.toLowerCase()}`,
       itemVariationData: {
-        pricing_type: "FIXED_PRICING",
+        pricingType: "FIXED_PRICING",
         priceMoney: {
           amount: parseInt(formData.amount),
           currency: "USD",
@@ -110,21 +156,21 @@ export default function CreateCatalog() {
     }
 
     if (variation.find((x) => x.id === newVariation.id)) {
-      return setError(true);
+      return;
     } else {
       setVariation((prevVariation) => {
         return [...prevVariation, newVariation];
       });
     }
     if (color.find((x) => x.id === newColor.id)) {
-      return setError(true);
+      return;
     } else {
       setColor((prevColor) => {
         return [...prevColor, newColor];
       });
     }
-    if (size.find((x) => x.id == newSize.id)) {
-      return setError(true);
+    if (size.find((x) => x.id === newSize.id)) {
+      return;
     } else {
       setSize((prevSize) => {
         return [...prevSize, newSize];
@@ -153,7 +199,7 @@ export default function CreateCatalog() {
     e.preventDefault();
     const newproduct = {
       name: formData.name,
-      description: formData.description,
+      description: content,
       variation: variation,
       color: color,
       size: size,
@@ -161,7 +207,7 @@ export default function CreateCatalog() {
     };
     console.log(newproduct);
     try {
-      const res = await axios.post("../api/catalog/additemqty", { newproduct });
+      const res = await axios.post("../api/catalog/create", { newproduct });
       console.log(res);
       setData(res);
     } catch (error) {
@@ -232,19 +278,8 @@ export default function CreateCatalog() {
             >
               Product Description
             </label>
-            <div className="mt-2">
-              <textarea
-                id="description"
-                name="description"
-                type="text"
-                onChange={handleChange}
-                value={formData.description}
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
+          <DraftEditor editorState={editorState} setEditorState={setEditorState} />
           </div>
-          <DraftEditor />
           <h2>Add product variation</h2>
           {variation.length > 0 && (
             <>
@@ -284,7 +319,7 @@ export default function CreateCatalog() {
                     onChange={handleChange}
                     value={formData.amount}
                     disabled={
-                      !formData.name || !formData.description ? true : false
+                      !formData.name ? true : false
                     }
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -340,19 +375,19 @@ export default function CreateCatalog() {
               </div>
             </div>
 
-            <button
+            <div
               onClick={submitVaration}
               className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               Add
-            </button>
+            </div>
           </div>
           {error && (
             <p className="max-w-sm text-sm text-red-600 text-center bg-red-300 rounded">
               enter a valid product variations
             </p>
           )}
-          <div className="w-full h-96 overflow-auto">
+          <div className="w-full max-h-96 h-auto overflow-auto">
             {image ? (
               <table className="mt-6 divide-y w-full text-left table-fixed">
                 <thead>
@@ -378,14 +413,14 @@ export default function CreateCatalog() {
                         />
                       </td>
                       <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                        <button onClick={() => handleClick(item.id)}>
+                        <div onClick={() => handleClick(item.id)}>
                           {item.id ===
                           selectedImage.find((select) => select === item.id) ? (
                             <FontAwesomeIcon icon={faSquareCheck} />
                           ) : (
                             <FontAwesomeIcon icon={faSquare} />
                           )}
-                        </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -402,7 +437,7 @@ export default function CreateCatalog() {
             <button
               type="submit"
               disabled={
-                !formData.name || !formData.description || !variation[0]
+                !formData.name || !variation[0]
                   ? true
                   : false
               }
