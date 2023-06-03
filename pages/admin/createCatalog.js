@@ -58,29 +58,9 @@ export default function CreateCatalog() {
     )
   );
   const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
-  console.log(content);
   const [data, setData] = useState(null);
   const [selectedImage, setSelectedImage] = useState([]);
-  const [image, setImage] = useState([
-    {
-      type: "IMAGE",
-      id: "UIL7H6ASIOER7O6HZCL2ASDP",
-      imageData: {
-        name: "health",
-        url: "https://square-catalog-sandbox.s3.amazonaws.com/files/2423540c2dcc9806a323b49b07533e9b917143fc/original.png",
-        caption: "health",
-      },
-    },
-    {
-      type: "IMAGE",
-      id: "7ZQUHUHHDYCJCVIFJ5EQNQMV",
-      imageData: {
-        name: "STOLE PIC",
-        url: "https://square-catalog-sandbox.s3.amazonaws.com/files/8e90ecb2bfd8a46131fa9df46a1fb827f5ae3755/original.jpeg",
-        caption: "STOLE PIC",
-      },
-    },
-  ]);
+  const [image, setImage] = useState(null);
   const [checked, setChecked] = useState(false);
   const [error, setError] = useState(false);
   const [variation, setVariation] = useState([]);
@@ -102,17 +82,17 @@ export default function CreateCatalog() {
       };
     });
   };
-  // useEffect(() => {
-  //   const getImage = async () => {
-  //     try {
-  //       const res = await axios.get("../api/image/getImage");
-  //       setImage(res.data.objects);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   getImage();
-  // }, []);
+  useEffect(() => {
+    const getImage = async () => {
+      try {
+        const res = await axios.get("../api/image/getImage");
+        setImage(res.data.objects);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getImage();
+  }, []);
   const submitVaration = (e) => {
     e.preventDefault();
     const newVariation = {
