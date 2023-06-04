@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
-import {
-  EditorState,
-  convertToRaw,
-  convertFromRaw,
-} from "draft-js";
+import { useState } from "react";
+import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import Image from "next/image";
-import axios from "axios";
+import Siderbar from "../../components/Sidebar";
 import EditVaraiation from "../../components/EditVaraition";
 import DraftEditor from "../../components/DraftEditor";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareCheck, faSquare } from "@fortawesome/free-regular-svg-icons";
 import Link from "next/link";
+import useFetch from "../../hooks/useFetch";
+import Loader from "../../components/Loader";
 
-export default function CreateCatalog() {
+export default function CreateCatalog({ repoImage }) {
+  console.log(repoImage);
+  const { get, post, loading } = useFetch();
   const [editorState, setEditorState] = useState(
     EditorState.createWithContent(
       convertFromRaw({
@@ -57,10 +57,9 @@ export default function CreateCatalog() {
       })
     )
   );
-  const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()))
-  const [data, setData] = useState(null);
+  const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
   const [selectedImage, setSelectedImage] = useState([]);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(repoImage.objects);
   const [checked, setChecked] = useState(false);
   const [error, setError] = useState(false);
   const [variation, setVariation] = useState([]);
@@ -72,7 +71,8 @@ export default function CreateCatalog() {
     color: "",
     size: "",
   });
-  console.log("responsedata ===", data);
+  console.log("size ===", size);
+  console.log("image ===", image);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       const { name, value, type, checked } = e.target;
@@ -82,17 +82,6 @@ export default function CreateCatalog() {
       };
     });
   };
-  useEffect(() => {
-    const getImage = async () => {
-      try {
-        const res = await axios.get("../api/image/getImage");
-        setImage(res.data.objects);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getImage();
-  }, []);
   const submitVaration = (e) => {
     e.preventDefault();
     const newVariation = {
@@ -187,9 +176,18 @@ export default function CreateCatalog() {
     };
     console.log(newproduct);
     try {
-      const res = await axios.post("../api/catalog/create", { newproduct });
-      console.log(res);
-      setData(res);
+      const res = await post("../api/catalog/create", { newproduct });
+      setFormData((prevFormData) => {
+        return {
+          ...prevFormData,
+          varName: "",
+          amount: "",
+        };
+      });
+      setColor([]);
+      setSize([]);
+      setVariation([]);
+      setSelectedImage([]);
     } catch (error) {
       console.log(error);
     }
@@ -214,220 +212,242 @@ export default function CreateCatalog() {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="my-10 sm:mx-auto sm:w-full">
-        <div className="mb-6 flex justify-between items-end">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-              Create New Product
-            </h2>
-            <p className="text-gray-500 mt-2">
-              Add new product to online store.
-            </p>
-          </div>
-          <Link href="/admin/uploadImage"
-            className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            add new Image
-          </Link>
-        </div>
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium leading-6 text-gray-900"
+    <div className="w-full ml-[200px]">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="my-10 sm:mx-auto sm:w-full">
+          {loading && (
+            <div className="w-full h-screen relative flex justify-center items-center">
+              <Loader />
+            </div>
+          )}
+          <div className="mb-6 flex justify-between items-end">
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                Create New Product
+              </h2>
+              <p className="text-gray-500 mt-2">
+                Add new product to online store.
+              </p>
+            </div>
+            <Link
+              href="/admin/uploadImage"
+              className="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Product Name
-            </label>
-            <div className="mt-2">
-              <input
-                id="name"
-                name="name"
-                type="text"
-                onChange={handleChange}
-                value={formData.name}
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              add new Image
+            </Link>
+          </div>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Product Name
+              </label>
+              <div className="mt-2">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  onChange={handleChange}
+                  value={formData.name}
+                  required
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Product Description
+              </label>
+              <DraftEditor
+                editorState={editorState}
+                setEditorState={setEditorState}
               />
             </div>
-          </div>
-          <div>
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Product Description
-            </label>
-          <DraftEditor editorState={editorState} setEditorState={setEditorState} />
-          </div>
-          <h2>Add product variation</h2>
-          {variation.length > 0 && (
-            <>
-              {/* <pre>{JSON.stringify(variation, null, 4)}</pre> */}
-              {variation.map((arr, i) => (
-                <EditVaraiation
-                  key={arr.id}
-                  id={arr.id}
-                  amount={arr.itemVariationData.priceMoney.amount}
-                  delete={() =>
-                    deleteVaraiation(
-                      arr.id,
-                      arr.itemVariationData.itemOptionValues[0]
-                        .itemOptionValueId,
-                      arr.itemVariationData.itemOptionValues[1]
-                        .itemOptionValueId
-                    )
-                  }
-                />
-              ))}
-            </>
-          )}
-          <div className="w-full flex justify-between items-end gap-4">
-            <div>
-              <div>
-                <label
-                  htmlFor="amount"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Amount $
-                </label>
-                <div className="mt-2">
-                  <input
-                    id="amount"
-                    name="amount"
-                    type="number"
-                    onChange={handleChange}
-                    value={formData.amount}
-                    disabled={
-                      !formData.name ? true : false
+            <h2>Add product variation</h2>
+            {variation.length > 0 && (
+              <>
+                {/* <pre>{JSON.stringify(variation, null, 4)}</pre> */}
+                {variation.map((arr, i) => (
+                  <EditVaraiation
+                    key={arr.id}
+                    id={arr.id}
+                    amount={arr.itemVariationData.priceMoney.amount}
+                    delete={() =>
+                      deleteVaraiation(
+                        arr.id,
+                        arr.itemVariationData.itemOptionValues[0]
+                          .itemOptionValueId,
+                        arr.itemVariationData.itemOptionValues[1]
+                          .itemOptionValueId
+                      )
                     }
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
-                </div>
-              </div>
-            </div>
-            <div>
+                ))}
+              </>
+            )}
+            <div className="w-full flex justify-between items-end gap-4">
               <div>
-                <label
-                  htmlFor="size"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Size
-                </label>
-                <div className="mt-2">
-                  <select
-                    name="size"
-                    value={formData.size}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                <div>
+                  <label
+                    htmlFor="amount"
+                    className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    <option value="">-- Choose Size --</option>
-                    <option value="Small">Small</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Large">Large</option>
-                  </select>
+                    Amount $
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      id="amount"
+                      name="amount"
+                      type="number"
+                      onChange={handleChange}
+                      value={formData.amount}
+                      disabled={!formData.name ? true : false}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div>
               <div>
-                <label
-                  htmlFor="color"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Color
-                </label>
-                <div className="mt-2">
-                  <select
-                    name="color"
-                    value={formData.color}
-                    onChange={handleChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                <div>
+                  <label
+                    htmlFor="size"
+                    className="block text-sm font-medium leading-6 text-gray-900"
                   >
-                    <option value="">-- Choose Color --</option>
-                    <option value="White">White</option>
-                    <option value="Black">Black</option>
-                    <option value="Red">Red</option>
-                    <option value="Blue">Blue</option>
-                    <option value="Yellow">Yellow</option>
-                  </select>
+                    Size
+                  </label>
+                  <div className="mt-2">
+                    <select
+                      name="size"
+                      value={formData.size}
+                      onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    >
+                      <option value="">-- Choose Size --</option>
+                      <option value="Small">Small</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Large">Large</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
+              <div>
+                <div>
+                  <label
+                    htmlFor="color"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Color
+                  </label>
+                  <div className="mt-2">
+                    <select
+                      name="color"
+                      value={formData.color}
+                      onChange={handleChange}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    >
+                      <option value="">-- Choose Color --</option>
+                      <option value="White">White</option>
+                      <option value="Black">Black</option>
+                      <option value="Red">Red</option>
+                      <option value="Blue">Blue</option>
+                      <option value="Yellow">Yellow</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
 
-            <div
-              onClick={submitVaration}
-              className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Add
+              <div
+                onClick={submitVaration}
+                className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Add
+              </div>
             </div>
-          </div>
-          {error && (
-            <p className="max-w-sm text-sm text-red-600 text-center bg-red-300 rounded">
-              enter a valid product variations
-            </p>
-          )}
-          <div className="w-full max-h-96 h-auto overflow-auto">
-            {image ? (
-              <table className="mt-6 divide-y w-full text-left table-fixed">
-                <thead>
-                  <tr className="text-gray-500">
-                    <th className="py-4">Name</th>
-                    <th className="py-4">Image</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {image.map((item) => (
-                    <tr key={item.id}>
-                      <td className="py-4 text-gray-500">
-                        {item.imageData.name}
-                      </td>
-                      <td className="py-4 text-gray-500">
-                        <Image
-                          src={item.imageData.url}
-                          width={300}
-                          height={300}
-                          alt="catalog image"
-                          className="h-8 w-8 rounded-full object-cover overflow"
-                          unoptimized
-                        />
-                      </td>
-                      <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                        <div onClick={() => handleClick(item.id)}>
-                          {item.id ===
-                          selectedImage.find((select) => select === item.id) ? (
-                            <FontAwesomeIcon icon={faSquareCheck} />
-                          ) : (
-                            <FontAwesomeIcon icon={faSquare} />
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p className="mt-6 text-center">
-                No catalog image found,{" "}
-                <Link href="/admin/uploadImage">add images</Link>
+            {error && (
+              <p className="max-w-sm text-sm text-red-600 text-center bg-red-300 rounded">
+                enter a valid product variations
               </p>
             )}
-          </div>
-          <div>
-            <button
-              type="submit"
-              disabled={
-                !formData.name || !variation[0]
-                  ? true
-                  : false
-              }
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Create Item
-            </button>
-          </div>
-        </form>
+            <div className="w-full max-h-96 h-auto overflow-auto">
+              {repoImage ? (
+                <table className="mt-6 divide-y w-full text-left table-fixed">
+                  <thead>
+                    <tr className="text-gray-500">
+                      <th className="py-4">Name</th>
+                      <th className="py-4">Image</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {image.map((item) => (
+                      <tr key={item.id}>
+                        <td className="py-4 text-gray-500">
+                          {item.imageData.name}
+                        </td>
+                        <td className="py-4 text-gray-500">
+                          <Image
+                            src={item.imageData.url}
+                            width={300}
+                            height={300}
+                            alt="catalog image"
+                            className="h-8 w-8 rounded-full object-cover overflow"
+                            unoptimized
+                          />
+                        </td>
+                        <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
+                          <div onClick={() => handleClick(item.id)}>
+                            {item.id ===
+                            selectedImage.find(
+                              (select) => select === item.id
+                            ) ? (
+                              <FontAwesomeIcon icon={faSquareCheck} />
+                            ) : (
+                              <FontAwesomeIcon icon={faSquare} />
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="mt-6 text-center">
+                  No catalog image found,{" "}
+                  <Link href="/admin/uploadImage">add images</Link>
+                </p>
+              )}
+            </div>
+            <div>
+              <button
+                type="submit"
+                disabled={!formData.name || !variation[0] ? true : false}
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
+
+export const getStaticProps = async () => {
+  const res = await fetch("http://localhost:3000/api/image/getImage");
+  const repoImage = await res.json();
+  return { props: { repoImage } };
+};
+
+CreateCatalog.getLayout = function PageLayout(page) {
+  return (
+    <div className="flex mx-auto w-full">
+      <Siderbar />
+      {page}
+    </div>
+  );
+};

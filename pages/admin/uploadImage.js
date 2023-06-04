@@ -4,8 +4,11 @@ import Image from "next/image";
 import axios from "axios";
 import Siderbar from "../../components/Sidebar";
 import { CameraIcon } from "@heroicons/react/24/outline";
+import useFetch from "../../hooks/useFetch"
+import Loader from "../../components/Loader"
 
 export default function UploadImage() {
+  const {get, post, loading} = useFetch()
   const [open, setOpen] = useState(false);
   const cancelButtonRef = useRef(null);
   const [image, setImage] = useState(null);
@@ -22,7 +25,7 @@ export default function UploadImage() {
     console.log("useffect", image);
     const uploadImage = async () => {
       try {
-        const res = await axios.post(
+        const res = await post(
           "../api/image/uploadImage",
           {
             image,
@@ -33,7 +36,6 @@ export default function UploadImage() {
             },
           }
         );
-        console.log(res);
         getImage();
         setImage(null);
         console.log("deleted", image);
@@ -46,11 +48,11 @@ export default function UploadImage() {
       console.log("good!");
       uploadImage();
     }
-  }, [image]);
+  }, [image, post]);
 
   const getImage = async () => {
     try {
-      const res = await axios.get("../api/image/getImage");
+      const res = await get("../api/image/getImage");
       setData(res.data.objects);
     } catch (error) {
       console.log(error);
@@ -95,6 +97,7 @@ export default function UploadImage() {
   return (
     <div className="w-full ml-[200px]">
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      {loading && <div className="w-full h-screen relative flex justify-center items-center"><Loader /></div>}
         <div className="border-2 border-dashed rounded py-6 flex flex-col justify-center items-center">
           <div className="mt-2 flex justify-between items-center">
             <input
@@ -142,10 +145,15 @@ export default function UploadImage() {
                     />
                   </td>
                   <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                    <button onClick={() => handleClick(item.id)}>Edit</button>
+                    <button 
+                    disabled={loading}
+                    onClick={() => handleClick(item.id)}>Edit</button>
                   </td>
                   <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                    <button onClick={(e) => deleteImage(e, item.id)}>
+                    <button 
+                    disabled={loading}
+                    onClick={(e) => deleteImage(e, item.id)}
+                    >
                       Delete
                     </button>
                   </td>

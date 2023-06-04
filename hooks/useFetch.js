@@ -5,9 +5,10 @@ export default function useFetch() {
   const [loading, setLoading] = useState(false);
 
   function get(url) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       try {
-        const data = axios.get(url, {});
+        setLoading(true);
+        const data = await axios.get(url, {});
         if (!data) {
           setLoading(false);
           return reject(data);
@@ -22,9 +23,10 @@ export default function useFetch() {
   }
 
   function post(url, body) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async(resolve, reject) => {
       try {
-        const data = axios.get(url, { body });
+        setLoading(true);
+        const data = await axios.get(url, { body }, {});
         if (!data) {
           setLoading(false);
           return reject(data);
