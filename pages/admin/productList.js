@@ -3,9 +3,9 @@ import axios from "axios";
 import Link from "next/link";
 import Siderbar from "../../components/Sidebar";
 
-export default function ProductList() {
-  const [data, setData] = useState(null);
-  console.log("swetData==>", data);
+export default function ProductList({ product}) {
+  const [data, setData] = useState(product.objects);
+  console.log("swetData==>", product);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -67,18 +67,18 @@ export default function ProductList() {
             </thead>
             <tbody>
               {data &&
-                filteredItem?.map((item) => (
+                data?.map((item) => (
                   <tr className="border-b" key={item.id}>
                     <td className="py-4">{`${
-                      item.updatedAt.split("T07")[0]
+                      item.updatedAt.split("T")[0]
                     }`}</td>
                     <td className="py-4 text-gray-500">
-                      item
+                      name
                       {/* {item.itemData.name} */}
                     </td>
                     <td className="py-4 text-gray-500">{item.type}</td>
                     <td className="py-4 text-gray-500">
-                      67
+                      length
                       {/* {item.itemData.variations.length} */}
                     </td>
                     <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
@@ -105,4 +105,10 @@ ProductList.getLayout = function PageLayout(page) {
       {page}
     </div>
   );
+};
+
+export const getStaticProps = async () => {
+  const res = await fetch("http://localhost:3000/api/catalog/get");
+  const product = await res.json();
+  return { props: { product} };
 };

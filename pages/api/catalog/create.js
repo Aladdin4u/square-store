@@ -9,6 +9,7 @@ const { catalogApi } = new Client({
 export default async function handler(req, res) {
   const { name, description, variation, color, size, images } =
     req.body.newproduct;
+    console.log(req.body)
   if (req.method === "POST") {
     try {
       const response = await catalogApi.batchUpsertCatalogObjects({
@@ -48,7 +49,6 @@ export default async function handler(req, res) {
                       itemOptionId: "#item_option_color",
                     },
                   ],
-                  image_ids: images,
                 },
               },
             ],

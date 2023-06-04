@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { Fragment, useRef, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import Image from "next/image";
 import Siderbar from "../../components/Sidebar";
+import axios from "axios";
 import EditVaraiation from "../../components/EditVaraition";
 import DraftEditor from "../../components/DraftEditor";
 import { CameraIcon } from "@heroicons/react/24/outline";
@@ -14,6 +16,8 @@ import Loader from "../../components/Loader";
 export default function CreateCatalog({ repoImage }) {
   console.log(repoImage);
   const { get, post, loading } = useFetch();
+  const [open, setOpen] = useState(false);
+  const cancelButtonRef = useRef(null);
   const [editorState, setEditorState] = useState(
     EditorState.createWithContent(
       convertFromRaw({
@@ -72,7 +76,7 @@ export default function CreateCatalog({ repoImage }) {
     size: "",
   });
   console.log("size ===", size);
-  console.log("image ===", image);
+  console.log("color ===", color);
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       const { name, value, type, checked } = e.target;
@@ -93,6 +97,7 @@ export default function CreateCatalog({ repoImage }) {
           amount: parseInt(formData.amount),
           currency: "USD",
         },
+        imageIds: selectedImage,
         itemOptionValues: [
           {
             itemOptionId: "#item_option_size",
@@ -172,11 +177,11 @@ export default function CreateCatalog({ repoImage }) {
       variation: variation,
       color: color,
       size: size,
-      images: selectedImage,
     };
     console.log(newproduct);
     try {
-      const res = await post("../api/catalog/create", { newproduct });
+      const res = await axios.post("../api/catalog/create", { newproduct });
+      console.log("response ==>", res);
       setFormData((prevFormData) => {
         return {
           ...prevFormData,
@@ -188,6 +193,7 @@ export default function CreateCatalog({ repoImage }) {
       setSize([]);
       setVariation([]);
       setSelectedImage([]);
+      setEditorState(EditorState.createEmpty());
     } catch (error) {
       console.log(error);
     }
@@ -362,6 +368,13 @@ export default function CreateCatalog({ repoImage }) {
               </div>
 
               <div
+                onClick={() => setOpen(true)}
+                className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Add image
+              </div>
+
+              <div
                 onClick={submitVaration}
                 className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
@@ -373,54 +386,7 @@ export default function CreateCatalog({ repoImage }) {
                 enter a valid product variations
               </p>
             )}
-            <div className="w-full max-h-96 h-auto overflow-auto">
-              {repoImage ? (
-                <table className="mt-6 divide-y w-full text-left table-fixed">
-                  <thead>
-                    <tr className="text-gray-500">
-                      <th className="py-4">Name</th>
-                      <th className="py-4">Image</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {image.map((item) => (
-                      <tr key={item.id}>
-                        <td className="py-4 text-gray-500">
-                          {item.imageData.name}
-                        </td>
-                        <td className="py-4 text-gray-500">
-                          <Image
-                            src={item.imageData.url}
-                            width={300}
-                            height={300}
-                            alt="catalog image"
-                            className="h-8 w-8 rounded-full object-cover overflow"
-                            unoptimized
-                          />
-                        </td>
-                        <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
-                          <div onClick={() => handleClick(item.id)}>
-                            {item.id ===
-                            selectedImage.find(
-                              (select) => select === item.id
-                            ) ? (
-                              <FontAwesomeIcon icon={faSquareCheck} />
-                            ) : (
-                              <FontAwesomeIcon icon={faSquare} />
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="mt-6 text-center">
-                  No catalog image found,{" "}
-                  <Link href="/admin/uploadImage">add images</Link>
-                </p>
-              )}
-            </div>
+
             <div>
               <button
                 type="submit"
@@ -431,6 +397,127 @@ export default function CreateCatalog({ repoImage }) {
               </button>
             </div>
           </form>
+          <Transition.Root show={open} as={Fragment}>
+            <Dialog
+              as="div"
+              className="relative z-10"
+              initialFocus={cancelButtonRef}
+              onClose={setOpen}
+            >
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+              </Transition.Child>
+
+              <div className="fixed inset-0 z-10 overflow-y-auto">
+                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    enterTo="opacity-100 translate-y-0 sm:scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                    leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                  >
+                    <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                      <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                        <div className="sm:flex sm:items-start">
+                          <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                            <Dialog.Title
+                              as="h3"
+                              className="text-base font-semibold leading-6 text-gray-900"
+                            >
+                              Select one or more for images
+                            </Dialog.Title>
+                            <div className="mt-2">
+                              <div className="w-full flex justify-between items-end gap-4">
+                                <div className="w-full max-h-96 h-auto overflow-auto">
+                                  {repoImage ? (
+                                    <table className="mt-6 divide-y w-full text-left table-fixed">
+                                      <thead>
+                                        <tr className="text-gray-500">
+                                          <th className="py-4">Name</th>
+                                          <th className="py-4">Image</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody className="divide-y">
+                                        {image.map((item) => (
+                                          <tr key={item.id}>
+                                            <td className="py-4 text-gray-500">
+                                              {item.imageData.name}
+                                            </td>
+                                            <td className="py-4 text-gray-500">
+                                              <Image
+                                                src={item.imageData.url}
+                                                width={300}
+                                                height={300}
+                                                alt="catalog image"
+                                                className="h-8 w-8 rounded-full object-cover overflow"
+                                                unoptimized
+                                              />
+                                            </td>
+                                            <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
+                                              <div
+                                                onClick={() =>
+                                                  handleClick(item.id)
+                                                }
+                                              >
+                                                {item.id ===
+                                                selectedImage.find(
+                                                  (select) => select === item.id
+                                                ) ? (
+                                                  <FontAwesomeIcon
+                                                    icon={faSquareCheck}
+                                                  />
+                                                ) : (
+                                                  <FontAwesomeIcon
+                                                    icon={faSquare}
+                                                  />
+                                                )}
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  ) : (
+                                    <p className="mt-6 text-center">
+                                      No catalog image found,{" "}
+                                      <Link href="/admin/uploadImage">
+                                        add images
+                                      </Link>
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <button
+                          type="button"
+                          className="mt-3 inline-flex w-full justify-center rounded-md bg-red-600 hover:bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-red-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                          onClick={() => setOpen(false)}
+                          ref={cancelButtonRef}
+                        >
+                          Done
+                        </button>
+                      </div>
+                    </Dialog.Panel>
+                  </Transition.Child>
+                </div>
+              </div>
+            </Dialog>
+          </Transition.Root>
         </div>
       </div>
     </div>

@@ -26,7 +26,7 @@ export default function useFetch() {
     return new Promise(async(resolve, reject) => {
       try {
         setLoading(true);
-        const data = await axios.get(url, { body }, {});
+        const data = await axios.get(url, { body });
         if (!data) {
           setLoading(false);
           return reject(data);
