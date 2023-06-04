@@ -1,5 +1,6 @@
 import { Client } from 'square';
 import { randomUUID } from 'crypto';
+import { totalAmount } from './orders.js';
 
 const { paymentsApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
@@ -14,7 +15,7 @@ export default async function handler(req, res) {
       sourceId: req.body.sourceId,
       amountMoney: {
         currency: 'USD',
-        amount: 100
+        amount: totalAmount
       }
     })
     console.log(result);
