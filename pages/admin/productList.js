@@ -62,20 +62,24 @@ export default function ProductList({ product}) {
                 <th className="py-4">Date</th>
                 <th className="py-4">Name</th>
                 <th className="py-4">Type</th>
+                <th className="py-4">Varaition No</th>
                 <th className="py-4">Action</th>
               </tr>
             </thead>
             <tbody>
               {data &&
-                data?.map((item) => (
+                filteredItem?.map((item) => (
                   <tr className="border-b" key={item.id}>
                     <td className="py-4">{`${
                       item.updatedAt.split("T")[0]
                     }`}</td>
                     <td className="py-4 text-gray-500">
-                      {item.id}
+                      {item.itemData.name}
                     </td>
                     <td className="py-4 text-gray-500">{item.type}</td>
+                    <td className="py-4 text-gray-500">
+                      {item.itemData.variations.length}
+                    </td>
                     <td className="py-4 font-medium text-red-600 hover:text-red-500">
                       <button onClick={(e) => deleteProduct(e, item.id)}>
                       <TrashIcon className="h-6 w-6" aria-hidden="true" />

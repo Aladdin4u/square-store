@@ -10,7 +10,9 @@ export default async function handler(req, res) {
   req.body.newCatalog;
   if (req.method === "POST") {
     try {
-      const response = await catalogApi.deleteCatalogObject(id);
+      const response = await catalogApi.batchDeleteCatalogObjects({
+        objectIds: [id],
+      });
 
       console.log(response.result);
       res.json(

@@ -58,8 +58,9 @@ import { useState } from "react";
 //   },
 //   // More products...
 // ];
+const img = "https://square-catalog-sandbox.s3.amazonaws.com/files/187c1481ba2b3091b3ff277b556c2a835d4fffa8/original.jpeg"
 
-export default function Product({ products}) {
+export default function Product({ products, images}) {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -71,13 +72,13 @@ export default function Product({ products}) {
           {products.map((product) => (
             <div key={product.id} className="group relative">
               <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                <Image
-                  src={product.itemData.variations[0].itemVariationData.imageIds[0]}
+                {<Image
+                  src={images.map(img => img.id === product.itemData.variations[0].itemVariationData.imageIds[0] ? img.imageData.url : img.imageData.url)}
                   alt={product.itemData.name}
                   width={500}
                   height={500}
                   className="h-full w-full object-cover object-center lg:h-full lg:w-full"
-                />
+                />}
               </div>
               <div className="mt-4 flex justify-between">
                 <div>
