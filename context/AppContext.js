@@ -68,7 +68,7 @@ function AppProvider(props) {
 
     function getTotalPrice() {
         return cart.reduce(
-            (total, product) => total + product.price * product.quantity,
+            (total, product) => total + product.itemVariationData.priceMoney.amount * product.quantity,
             0
         );
     }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Dialog, Disclosure, Popover, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -7,10 +7,13 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import Cart from "./cart";
+import Cart from "./Cart";
+import { AppContext } from "../context/AppContext.js";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false)
+  const app = useContext(AppContext);
+  const cartCount = app?.getCartCount();
+  const [open, setOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -26,17 +29,20 @@ export default function Navbar() {
             </div>
             <span className="ml-4 font-bold">Finesse</span>
           </Link>
-            <button
-              type="button"
-              className="text-gray-700"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </button>
+          <button
+            type="button"
+            className="text-gray-700"
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <span className="sr-only">Open main menu</span>
+            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+          </button>
         </div>
         <div className="flex lg:flex-1 lg:justify-end space-x-4">
-          <Link href="/" className="text-sm font-semibold leading-6 text-gray-900">
+          <Link
+            href="/"
+            className="text-sm font-semibold leading-6 text-gray-900"
+          >
             <MagnifyingGlassIcon className="h-6 w-6" />
           </Link>
           <div
@@ -44,12 +50,14 @@ export default function Navbar() {
             className="text-sm font-semibold leading-6 text-gray-900 relative"
           >
             <ShoppingCartIcon className="h-6 w-6" />{" "}
-            <span
-              aria-hidden="true"
-              className="absolute -top-1 -right-1 w-4 h-4 p-1 text-center text-xs rounded-full bg-orange-500 flex justify-center items-center"
-            >
-              0
-            </span>
+            {cartCount > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute -top-1 -right-1 w-4 h-4 p-1 text-center text-xs rounded-full bg-orange-500 flex justify-center items-center"
+              >
+                {cartCount}
+              </span>
+            )}
           </div>
         </div>
       </nav>
@@ -110,11 +118,7 @@ export default function Navbar() {
           </div>
         </Dialog.Panel>
       </Dialog>
-      <Cart
-        open={open}
-        close={setOpen}
-        onClose={() => setOpen(false)}
-      />
+      <Cart open={open} close={setOpen} onClose={() => setOpen(false)} />
     </header>
   );
 }

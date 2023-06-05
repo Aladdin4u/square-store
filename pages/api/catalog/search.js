@@ -6,35 +6,30 @@ const { catalogApi } = new Client({
 });
 
 export default async function handler(req, res) {
-  if (req.method === "POST") {
-    try {
-      const response = await catalogApi.searchCatalogItems({
-        textFilter: "Shirt",
-        productTypes: ["REGULAR"],
-      });
+  try {
+    const response = await catalogApi.searchCatalogItems({
+      // textFilter: "Shirt",
+      productTypes: ["REGULAR"],
+    });
 
-      console.log(response.result);
-      res.json(
-        JSON.parse(
-          JSON.stringify(
-            response.result,
-            (key, value) =>
-              typeof value === "bigint" ? value.toString() : value // return everything else unchanged
-          )
+    console.log(response.result);
+    res.json(
+      JSON.parse(
+        JSON.stringify(
+          response.result,
+          (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
         )
-      );
-    } catch (error) {
-      if (error instanceof ApiError) {
-        error.result.errors.forEach(function (e) {
-          console.log(e.category);
-          console.log(e.code);
-          console.log(e.detail);
-        });
-      } else {
-        console.log("Unexpected error occurred: ", error);
-      }
+      )
+    );
+  } catch (error) {
+    if (error instanceof ApiError) {
+      error.result.errors.forEach(function (e) {
+        console.log(e.category);
+        console.log(e.code);
+        console.log(e.detail);
+      });
+    } else {
+      console.log("Unexpected error occurred: ", error);
     }
-  } else {
-    res.status(500).send();
   }
 }

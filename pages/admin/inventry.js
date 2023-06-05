@@ -3,7 +3,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import Siderbar from "../../components/Sidebar";
 import axios from "axios";
 
-export default function Inventry() {
+export default function Inventry({ inventry }) {
+  console.log(inventry)
   const [open, setOpen] = useState(false);
 
   const cancelButtonRef = useRef(null);
@@ -42,9 +43,9 @@ export default function Inventry() {
         return alert("enter quantity")
       }
       if (formData.type === "additem") {
-        res = await axios.post("../api/catalog/additemqty", { formData });
+        res = await axios.post("../api/inventry/additemqty", { formData });
       } else {
-        res = await axios.post("../api/catalog/deleteitemqty", { formData });
+        res = await axios.post("../api/inventry/deleteitemqty", { formData });
       }
       console.log(res);
       setFormData((prevFormData) => {
@@ -250,4 +251,10 @@ Inventry.getLayout = function PageLayout(page) {
       {page}
     </div>
   );
+};
+
+export const getStaticProps = async () => {
+  const res = await fetch("http://localhost:3000/api/catalog/search");
+  const inventry = await res.json();
+  return { props: { inventry } };
 };

@@ -7,7 +7,7 @@ const { catalogApi } = new Client({
 
 export default async function handler(req, res) {
   try {
-    const response = await catalogApi.listCatalog();
+    const response = await catalogApi.listCatalog(undefined,'ITEM_VARIATION');
 
     return res.json(
       JSON.parse(
