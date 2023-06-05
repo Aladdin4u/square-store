@@ -130,21 +130,36 @@ export default function CreateCatalog({ repoImage }) {
     }
 
     if (variation.find((x) => x.id === newVariation.id)) {
-      return;
+      return alert("enter a product variation color and size, no duplicate");
     } else {
       setVariation((prevVariation) => {
         return [...prevVariation, newVariation];
       });
     }
+
     if (color.find((x) => x.id === newColor.id)) {
-      return;
+      setFormData((prevFormData) => {
+        return {
+          ...prevFormData,
+          amount: "",
+          color: "",
+          size: "",
+        };
+      });
     } else {
       setColor((prevColor) => {
         return [...prevColor, newColor];
       });
     }
     if (size.find((x) => x.id === newSize.id)) {
-      return;
+      setFormData((prevFormData) => {
+        return {
+          ...prevFormData,
+          amount: "",
+          color: "",
+          size: "",
+        };
+      });
     } else {
       setSize((prevSize) => {
         return [...prevSize, newSize];
@@ -154,8 +169,9 @@ export default function CreateCatalog({ repoImage }) {
     setFormData((prevFormData) => {
       return {
         ...prevFormData,
-        varName: "",
         amount: "",
+        color: "",
+        size: "",
       };
     });
     setError(false);
@@ -185,7 +201,7 @@ export default function CreateCatalog({ repoImage }) {
       setFormData((prevFormData) => {
         return {
           ...prevFormData,
-          varName: "",
+          name: "",
           amount: "",
         };
       });

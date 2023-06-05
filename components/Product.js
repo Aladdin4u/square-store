@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useState } from "react";
 
 /*
   This example requires some changes to your config:
@@ -14,51 +15,51 @@ import Image from "next/image";
   }
   ```
 */
-const products = [
-  {
-    id: 1,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 2,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 3,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  {
-    id: 4,
-    name: "Basic Tee",
-    href: "#",
-    imageSrc:
-      "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Black",
-  },
-  // More products...
-];
+// const products = [
+//   {
+//     id: 1,
+//     name: "Basic Tee",
+//     href: "#",
+//     imageSrc:
+//       "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
+//     imageAlt: "Front of men's Basic Tee in black.",
+//     price: "$35",
+//     color: "Black",
+//   },
+//   {
+//     id: 2,
+//     name: "Basic Tee",
+//     href: "#",
+//     imageSrc:
+//       "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
+//     imageAlt: "Front of men's Basic Tee in black.",
+//     price: "$35",
+//     color: "Black",
+//   },
+//   {
+//     id: 3,
+//     name: "Basic Tee",
+//     href: "#",
+//     imageSrc:
+//       "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
+//     imageAlt: "Front of men's Basic Tee in black.",
+//     price: "$35",
+//     color: "Black",
+//   },
+//   {
+//     id: 4,
+//     name: "Basic Tee",
+//     href: "#",
+//     imageSrc:
+//       "/img/ecommerce-images/product-page-01-related-product-01\.jpg",
+//     imageAlt: "Front of men's Basic Tee in black.",
+//     price: "$35",
+//     color: "Black",
+//   },
+//   // More products...
+// ];
 
-export default function Product() {
+export default function Product({ products}) {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -71,8 +72,8 @@ export default function Product() {
             <div key={product.id} className="group relative">
               <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
                 <Image
-                  src={product.imageSrc}
-                  alt={product.imageAlt}
+                  src={product.itemData.variations[0].itemVariationData.imageIds[0]}
+                  alt={product.itemData.name}
                   width={500}
                   height={500}
                   className="h-full w-full object-cover object-center lg:h-full lg:w-full"
@@ -83,13 +84,13 @@ export default function Product() {
                   <h3 className="text-sm text-gray-700">
                     <a href={product.href}>
                       <span aria-hidden="true" className="absolute inset-0" />
-                      {product.name}
+                      {product.itemData.name}
                     </a>
                   </h3>
-                  <p className="mt-1 text-sm text-gray-500">{product.color}</p>
+                  <p className="mt-1 text-sm text-gray-500">{product.itemData.variations[0].itemVariationData.name.split(",")[1]}</p>
                 </div>
                 <p className="text-sm font-medium text-gray-900">
-                  {product.price}
+                  {product.itemData.variations[0].itemVariationData.priceMoney.amount}
                 </p>
               </div>
             </div>

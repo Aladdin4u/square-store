@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Siderbar from "../../components/Sidebar";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 export default function ProductList({ product}) {
   const [data, setData] = useState(product.objects);
@@ -61,7 +62,6 @@ export default function ProductList({ product}) {
                 <th className="py-4">Date</th>
                 <th className="py-4">Name</th>
                 <th className="py-4">Type</th>
-                <th className="py-4">Varaition No</th>
                 <th className="py-4">Action</th>
               </tr>
             </thead>
@@ -73,17 +73,12 @@ export default function ProductList({ product}) {
                       item.updatedAt.split("T")[0]
                     }`}</td>
                     <td className="py-4 text-gray-500">
-                      name
-                      {/* {item.itemData.name} */}
+                      {item.id}
                     </td>
                     <td className="py-4 text-gray-500">{item.type}</td>
-                    <td className="py-4 text-gray-500">
-                      length
-                      {/* {item.itemData.variations.length} */}
-                    </td>
-                    <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
+                    <td className="py-4 font-medium text-red-600 hover:text-red-500">
                       <button onClick={(e) => deleteProduct(e, item.id)}>
-                        delete
+                      <TrashIcon className="h-6 w-6" aria-hidden="true" />
                       </button>
                     </td>
                   </tr>

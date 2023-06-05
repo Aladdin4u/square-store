@@ -7,9 +7,9 @@
   
   .editorContainer {
     width: 100%;
-    border: 1px solid gray;
-    background: rgba(128, 128, 128, 0.714);
-    color: #fff;
+    border: 1px solid rgb(255, 255, 255);
+    background: rgba(128, 128, 128, 0.132);
+    color: black;
     padding: 1rem;
   }
   

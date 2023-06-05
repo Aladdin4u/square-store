@@ -5,8 +5,14 @@ import Product from "../components/Product";
 import Collections from "../components/Collections";
 import { useState } from "react";
 
-export default function Home() {
-  const [data, setData] = useState();
+export default function Home({ product }) {
+  const [products, setProducts] = useState(product.objects);
+  console.log(products)
+  const filteredItem = products
+    ? products.filter((item) => item.type === "ITEM")
+    : products;
+    console.log(filteredItem)
+
   const handleCatalog = async () => {
     const res = await axios.post("api/catalog/create", {});
     console.log(res);
@@ -24,7 +30,7 @@ export default function Home() {
     <div className="flex flex-col justify-center item-center">
       <Hero />
       <Collections />
-      <Product />
+      <Product products={filteredItem} />
       <Newsletter />
     </div>
   );
