@@ -273,7 +273,7 @@ export default function UploadImage({ repoImage }) {
   );
 }
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:3000/api/image/getImage");
+  const res = await axios.get("http://localhost:3000/api/image/getImage");
   const repoImage = await res.json();
   return { props: { repoImage } };
 };
