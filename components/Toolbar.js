@@ -20,9 +20,9 @@ import {
   faUnderline,
 } from "@fortawesome/free-solid-svg-icons";
 import { RichUtils } from "draft-js";
-import styles from "../styles/draft.module.css";
+import styles from "../styles/Draft.module.css";
 
-export default function Toolbar ({ editorState, setEditorState }) {
+export default function Toolbar({ editorState, setEditorState }) {
   const tools = [
     {
       label: "bold",
@@ -175,4 +175,4 @@ export default function Toolbar ({ editorState, setEditorState }) {
       ))}
     </div>
   );
-};
+}

@@ -5,7 +5,7 @@ import {
   convertToRaw,
 } from "draft-js";
 import Toolbar from "./Toolbar";
-import styles from "../styles/draft.module.css";
+import styles from "../styles/Draft.module.css";
 
 export default function DraftEditor({editorState, setEditorState}) {
   const editor = useRef(null);
