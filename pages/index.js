@@ -82,8 +82,8 @@ export default function Home({ product, images }) {
 }
 
 export const getStaticProps = async () => {
-  const res = await axios.get("finesse.vercel.app/api/catalog/get");
-  const image = await axios.get("finesse.vercel.app/api/image/getImage");
+  const res = await fetch("http://localhost:3000/api/catalog/get");
+  const image = await fetch("http://localhost:3000/api/image/getImage");
   const product = await res.json();
   const images = await image.json();
   return { props: { product, images } };

@@ -10,7 +10,7 @@ export default function Cart(props) {
   const app = useContext(AppContext);
   const cart = app.cart;
   const totalPrice = app.getTotalPrice();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const orderItems = cart.map((product) => {
     return {
@@ -26,6 +26,7 @@ export default function Cart(props) {
         orderItems,
       });
       console.log(order);
+      localStorage.setItem("order", JSON.stringify(order.data.order))
       setOpen(false);
       Router.push("/checkout");
     } catch (error) {
@@ -90,8 +91,8 @@ export default function Cart(props) {
                                   <li key={product.id} className="flex py-6">
                                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                       <Image
-                                        src={product.imageSrc}
-                                        alt={product.imageAlt}
+                                        src={product.itemVariationData.imageIds[0]}
+                                        alt={product.itemVariationData.name}
                                         width={200}
                                         height={200}
                                         className="h-full w-full object-cover object-center"

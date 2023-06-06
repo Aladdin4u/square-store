@@ -267,7 +267,7 @@ Inventry.getLayout = function PageLayout(page) {
 };
 
 export const getStaticProps = async () => {
-  const res = await axios.get("finesse.vercel.app/api/catalog/get");
+  const res = await axios.get("http://localhost:3000/api/catalog/get");
   const inventry = await res.json();
   return { props: { inventry } };
 };

@@ -7,6 +7,7 @@ const { paymentsApi } = new Client({
 });
 
 export default async function handler(req, res) {
+  console.log(req.body)
   if (req.method === "POST") {
     try {
       const response = await paymentsApi.createPayment({
@@ -17,10 +18,16 @@ export default async function handler(req, res) {
           currency: "USD",
         },
         orderId: req.body.orderId,
-        referenceId: "123456",
       });
-      console.log(result);
-      res.status(200).json(result);
+      console.log(response.result);
+      res.json(
+        JSON.parse(
+          JSON.stringify(
+            response.result,
+            (key, value) => (typeof value === "bigint" ? value.toString() : value) // return everything else unchanged
+          )
+        )
+      );
     } catch (error) {
       if (error instanceof ApiError) {
         error.result.errors.forEach(function (e) {

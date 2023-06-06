@@ -100,7 +100,7 @@ ProductList.getLayout = function PageLayout(page) {
 };
 
 export const getStaticProps = async () => {
-  const res = await axios.get("finesse.vercel.app/api/catalog/get");
+  const res = await fetch("http://localhost:3000/api/catalog/get");
   const product = await res.json();
   return { props: { product} };
 };
