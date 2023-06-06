@@ -37,10 +37,10 @@ export default function Hero() {
           <Image
             src="/images/logan-weaver.jpg"
             width={500}
-            height={300}
+            height={500}
             alt="hero-image"
             // style={{objectFit: "contain"}}
-            className="h-[100vh] w-full"
+            className="h-[100vh] w-full object-cover object-center"
           />
         </div>
       </div>

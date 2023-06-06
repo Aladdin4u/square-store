@@ -3,26 +3,35 @@ import axios from "axios";
 import Link from "next/link";
 import Siderbar from "../../components/Sidebar";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import Loader from "../../components/Loader";
 
 export default function ProductList({ product}) {
   const [data, setData] = useState(product.objects);
+  const [loading, setLoading] = useState(false);
   console.log("swetData==>", product);
 
   const deleteProduct = async (e, id) => {
     e.preventDefault();
     try {
+      setLoading(true)
       setData((prevData) => prevData.filter((item) => item.id !== id));
       const res = await axios.post("../api/catalog/delete", { id });
       console.log(res);
-      getProducts();
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
   return (
     <div className="w-full ml-[200px]">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      {loading && (
+            <div className="w-full h-screen z-10 flex justify-center items-center">
+              <Loader />
+            </div>
+          )}
         <div className="mb-6 flex justify-between items-end">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-gray-900">

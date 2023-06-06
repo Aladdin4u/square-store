@@ -1,5 +1,6 @@
 import { Fragment, useContext, useState } from "react";
-import Router from 'next/router'
+import Router from "next/router";
+import Image from "next/image";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { AppContext } from "../context/AppContext.js";
@@ -25,8 +26,8 @@ export default function Cart(props) {
         orderItems,
       });
       console.log(order);
-      setOpen(false)
-      Router.push('/checkout')
+      setOpen(false);
+      Router.push("/checkout");
     } catch (error) {
       console.log(error);
     }
@@ -88,10 +89,14 @@ export default function Cart(props) {
                                 cart.map((product) => (
                                   <li key={product.id} className="flex py-6">
                                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                                      <img
+                                      <Image
                                         src={product.imageSrc}
                                         alt={product.imageAlt}
+                                        width={200}
+                                        height={200}
                                         className="h-full w-full object-cover object-center"
+                                        unoptimized
+                                        priority={true}
                                       />
                                     </div>
 

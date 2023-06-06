@@ -15,7 +15,8 @@ import Loader from "../../components/Loader";
 
 export default function CreateCatalog({ repoImage }) {
   console.log(repoImage);
-  const { get, post, loading } = useFetch();
+  // const { get, post, loading } = useFetch();
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const cancelButtonRef = useRef(null);
   const [editorState, setEditorState] = useState(
@@ -196,6 +197,7 @@ export default function CreateCatalog({ repoImage }) {
     };
     console.log(newproduct);
     try {
+      setLoading(true)
       const res = await axios.post("../api/catalog/create", { newproduct });
       console.log("response ==>", res);
       setFormData((prevFormData) => {
@@ -210,8 +212,10 @@ export default function CreateCatalog({ repoImage }) {
       setVariation([]);
       setSelectedImage([]);
       setEditorState(EditorState.createEmpty());
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
   const handleClick = (id) => {
@@ -406,10 +410,10 @@ export default function CreateCatalog({ repoImage }) {
             <div>
               <button
                 type="submit"
-                disabled={!formData.name || !variation[0] ? true : false}
+                disabled={loading}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Save
+                {loading ? <span classNamme="h-12 w-24"> <Loader /></span> : "Save"}
               </button>
             </div>
           </form>

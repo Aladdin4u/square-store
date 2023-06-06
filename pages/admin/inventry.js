@@ -2,13 +2,15 @@ import { Fragment, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Siderbar from "../../components/Sidebar";
 import axios from "axios";
+import Loader from "../../components/Loader";
 
 export default function Inventry({ inventry }) {
   console.log(inventry)
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const cancelButtonRef = useRef(null);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(inventry.objects);
   const [formData, setFormData] = useState({
     id: "",
     quantity: "",
@@ -28,16 +30,20 @@ export default function Inventry({ inventry }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       const res = await axios.post("../api/catalog/search", {});
       console.log(res);
       setData(res.data.items);
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
   const UpdateInventry = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true)
       let res;
       if(!formData.quantity) {
         return alert("enter quantity")
@@ -56,8 +62,10 @@ export default function Inventry({ inventry }) {
         };
       });
       setOpen(false);
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
   const handleClick = async (id) => {
@@ -74,6 +82,11 @@ export default function Inventry({ inventry }) {
   return (
     <div className="w-full ml-[200px]">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      {loading && (
+            <div className="w-full absolute inset-0 z-80 flex justify-center items-center">
+              <Loader />
+            </div>
+          )}
         <div className="mb-6 flex justify-between items-end">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-gray-900">
@@ -93,36 +106,36 @@ export default function Inventry({ inventry }) {
         <table className="w-full text-left table-auto">
           <thead>
             <tr className="border-b text-gray-500">
-              <th className="py-4">Category</th>
-              <th className="py-4">Size</th>
-              <th className="py-4">Color</th>
+              <th className="py-4">Date</th>
+              <th className="py-4">Name</th>
+              <th className="py-4">Type</th>
               <th className="py-4">Price</th>
-              <th className="py-4">Quantity</th>
               <th className="py-4">Action</th>
             </tr>
           </thead>
           <tbody>
             {data ? (
-              data[0]?.itemData.variations.map((item) => (
+              data.map((item) => (
                 <tr className="border-b" key={item.id}>
-                  <td className="py-4">Shirt</td>
+                  <td className="py-4">{`${
+                      item.updatedAt.split("T")[0]
+                    }`}</td>
                   <td className="py-4 text-gray-500">
-                    {item.itemVariationData.name.split(",")[0]}
+                  {item.itemVariationData.name}
                   </td>
                   <td className="py-4 text-gray-500">
-                    {item.itemVariationData.name.split(",")[1].trim()}
+                  {item.type}
                   </td>
                   <td className="py-4 text-gray-500">
                     ${item.itemVariationData.priceMoney.amount}
                   </td>
-                  <td className="py-4 text-gray-500">25</td>
                   <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
                     <button onClick={() => handleClick(item.id)}>Edit</button>
                   </td>
                 </tr>
               ))
             ) : (
-              <p>no data</p>
+              <p>no inventry data</p>
             )}
           </tbody>
         </table>
@@ -222,7 +235,7 @@ export default function Inventry({ inventry }) {
                         className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
                         onClick={UpdateInventry}
                       >
-                        Update Item
+                        {loading ? "Updating..." : "Update Item"}
                       </button>
                       <button
                         type="button"
@@ -254,7 +267,7 @@ Inventry.getLayout = function PageLayout(page) {
 };
 
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:3000/api/catalog/search");
+  const res = await fetch("http://localhost:3000/api/catalog/get");
   const inventry = await res.json();
   return { props: { inventry } };
 };

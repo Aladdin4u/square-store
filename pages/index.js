@@ -14,14 +14,11 @@ export default function Home({ product, images }) {
   const getImageUrl = (id) => {
     img.filter((prevImage) => {
       if (prevImage.id === id) {
+        console.log(prevImage.imageData.url)
         return prevImage.imageData.url;
       }
     });
   };
-
-  // const filteredItem = products
-  //   ? products.filter((item) => item.type === "ITEM")
-  //   : products;
 
   return (
     <div className="flex flex-col justify-center item-center">
@@ -37,12 +34,11 @@ export default function Home({ product, images }) {
             {products?.map((product) => (
               <div key={product.id} className="group relative">
                 <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                  {getImageUrl(
-                    getImageUrl(product.itemVariationData.imageIds[0])
-                  ) && (
+                  {product.itemVariationData?.imageIds
+                   && (
                     <Image
-                      src={getImageUrl(product.itemVariationData.imageIds[0])}
-                      alt={product.itemData.name}
+                      src="https://square-catalog-sandbox.s3.amazonaws.com/files/187c1481ba2b3091b3ff277b556c2a835d4fffa8/original.jpeg"
+                      alt={product.itemVariationData.name}
                       width={500}
                       height={500}
                       className="h-full w-full object-cover lg:h-full lg:w-full"

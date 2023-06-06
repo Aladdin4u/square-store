@@ -6,26 +6,25 @@ import Siderbar from "../../components/Sidebar";
 import { CameraIcon } from "@heroicons/react/24/outline";
 import useFetch from "../../hooks/useFetch"
 import Loader from "../../components/Loader"
+import { faListSquares } from "@fortawesome/free-solid-svg-icons";
 
-export default function UploadImage() {
-  const {get, post, loading} = useFetch()
+export default function UploadImage({ repoImage }) {
+  // const {get, post, loading} = useFetch()
+  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const cancelButtonRef = useRef(null);
   const [image, setImage] = useState(null);
   const [changeImage, setChangeImage] = useState(null);
   const [imageId, setImageId] = useState("");
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    getImage();
-  }, []);
+  const [data, setData] = useState(repoImage.objects);
 
   useEffect(() => {
     if (!image) return;
     console.log("useffect", image);
     const uploadImage = async () => {
       try {
-        const res = await post(
+        setLoading(true)
+        const res = await axios.post(
           "../api/image/uploadImage",
           {
             image,
@@ -36,31 +35,38 @@ export default function UploadImage() {
             },
           }
         );
+        console.log(res);
         getImage();
         setImage(null);
         console.log("deleted", image);
+        setLoading(false)
       } catch (error) {
         setImage(null);
         console.log(error);
+        setLoading(false)
       }
     };
     if (image) {
       console.log("good!");
       uploadImage();
     }
-  }, [image, post]);
+    const getImage = async () => {
+      try {
+        setLoading(true)
+        const res = await axios.get("../api/image/getImage");
+        setData(res.data.objects);
+        setLoading(false)
+      } catch (error) {
+        console.log(error);
+        setLoading(false)
+      }
+    };
+  }, [image]);
 
-  const getImage = async () => {
-    try {
-      const res = await get("../api/image/getImage");
-      setData(res.data.objects);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const replaceImage = async () => {
     try {
+      setLoading(true)
       const res = await axios.post(
         "../api/image/replaceImage",
         { image: changeImage, id: imageId.id },
@@ -72,20 +78,25 @@ export default function UploadImage() {
       );
       console.log(res);
       setOpen(false);
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
 
   const deleteImage = async (e, id) => {
     e.preventDefault();
     try {
+      setLoading(true)
       setData((prevData) => prevData.filter((item) => item.id !== id));
       const res = await axios.post("../api/catalog/delete", { id });
       console.log(res);
       getImage();
+      setLoading(false)
     } catch (error) {
       console.log(error);
+      setLoading(false)
     }
   };
   const handleClick = async (id) => {
@@ -97,7 +108,7 @@ export default function UploadImage() {
   return (
     <div className="w-full ml-[200px]">
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      {loading && <div className="w-full h-screen relative flex justify-center items-center"><Loader /></div>}
+      {loading && <div className="w-full h-screen absolute inset-0 flex justify-center items-center"><Loader /></div>}
         <div className="border-2 border-dashed rounded py-6 flex flex-col justify-center items-center">
           <div className="mt-2 flex justify-between items-center">
             <input
@@ -261,6 +272,11 @@ export default function UploadImage() {
     </div>
   );
 }
+export const getStaticProps = async () => {
+  const res = await fetch("http://localhost:3000/api/image/getImage");
+  const repoImage = await res.json();
+  return { props: { repoImage } };
+};
 
 UploadImage.getLayout = function PageLayout(page) {
   return (
