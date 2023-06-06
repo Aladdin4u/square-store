@@ -68,7 +68,7 @@ export default function Home({ product, images }) {
                       ${product.itemVariationData.priceMoney.amount}
                     </p>
                     <div
-                      className="z-10 absolute bg-red-300 mt-1 text-sm text-red-500 hover:bg-green-900"
+                      className="z-10 absolute font-bold text-green-300 mt-1 text-sm text-green-500 hover:bg-green-900"
                       onClick={() => app.onProductAdd(product)}
                     >
                       buy

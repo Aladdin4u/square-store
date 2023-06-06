@@ -8,18 +8,6 @@ export default function ProductList({ product}) {
   const [data, setData] = useState(product.objects);
   console.log("swetData==>", product);
 
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const res = await axios.get("../api/catalog/get", {});
-        console.log(res);
-        setData(res.data.objects);
-      } catch (error) {
-        console.log(error);
-      }
-      getProducts();
-    };
-  }, []);
   const deleteProduct = async (e, id) => {
     e.preventDefault();
     try {
@@ -31,10 +19,6 @@ export default function ProductList({ product}) {
       console.log(error);
     }
   };
-
-  const filteredItem = data
-    ? data.filter((item) => item.type === "ITEM")
-    : data;
 
   return (
     <div className="w-full ml-[200px]">
@@ -62,23 +46,23 @@ export default function ProductList({ product}) {
                 <th className="py-4">Date</th>
                 <th className="py-4">Name</th>
                 <th className="py-4">Type</th>
-                <th className="py-4">Varaition No</th>
+                <th className="py-4">price</th>
                 <th className="py-4">Action</th>
               </tr>
             </thead>
             <tbody>
               {data &&
-                filteredItem?.map((item) => (
+                data.map((item) => (
                   <tr className="border-b" key={item.id}>
                     <td className="py-4">{`${
                       item.updatedAt.split("T")[0]
                     }`}</td>
                     <td className="py-4 text-gray-500">
-                      {item.itemData.name}
+                      {item.itemVariationData.name}
                     </td>
                     <td className="py-4 text-gray-500">{item.type}</td>
                     <td className="py-4 text-gray-500">
-                      {item.itemData.variations.length}
+                      {item.itemVariationData.priceMoney.amount}
                     </td>
                     <td className="py-4 font-medium text-red-600 hover:text-red-500">
                       <button onClick={(e) => deleteProduct(e, item.id)}>

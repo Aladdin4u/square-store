@@ -14,18 +14,24 @@ export default function Siderbar() {
         </div>
         <h1 className="mt-6 px-6 font-bold text-gray-900">Admin Dashboard</h1>
         <ul role="list" className="mt-6 gap-y-6">
-          <li className={`${router.pathname == "/admin/dashboard" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
-            <Link href="/admin/dashboard">Catalog</Link>
+          <li className={`${router.pathname == "/admin/createCatalog" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
+            <Link href="/admin/createCatalog">Product</Link>
+          </li>
+          <li className={`${router.pathname == "/admin/productList" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
+            <Link href="/admin/productList">Product list</Link>
+          </li>
+          <li className={`${router.pathname == "/admin/uploadImage" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
+            <Link href="/admin/uploadImage">Upload Image</Link>
           </li>
           <li className={`${router.pathname == "/admin/inventry" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
             <Link href="/admin/inventry">Manage Inventry</Link>
           </li>
-          <li className={`${router.pathname == "/admin/items" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
-            <Link href="/admin/items">Item</Link>
+          {/* <li className={`${router.pathname == "/admin/order" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
+            <Link href="/admin/items">order</Link>
           </li>
           <li className={`${router.pathname == "/admin/customer" ? "bg-gray-200 text-white" : ""} hover:bg-gray-400 hover:text-gray-300 text-base px-6 py-2 text-gray-900 cursor-pointer`}>
             <Link href="/admin/customer">Customer</Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>

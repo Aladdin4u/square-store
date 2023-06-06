@@ -1,6 +1,4 @@
 import {
-  ApplePay,
-  GooglePay,
   CreditCard,
   PaymentForm,
 } from "react-square-web-payments-sdk";
@@ -19,22 +17,14 @@ export default function Checkout() {
             },
             body: JSON.stringify({
               sourceId: token.token,
+              orderId,
+              totalMoney
             }),
           });
           console.log(await response.json());
         }}
-        locationId="XXXXXXXXXX"
-        createPaymentRequest={() => ({
-          countryCode: "US",
-          currencyCode: "USD",
-          total: {
-            amount: "1.00",
-            label: "Total",
-          },
-        })}
+        locationId="L8PQE1FX87X0V"
       >
-        <ApplePay />
-        <GooglePay />
         <CreditCard />
       </PaymentForm>
     </div>

@@ -1,53 +1,44 @@
 import { Client, ApiError } from "square";
 import { randomUUID } from "crypto";
-import axios from "axios"; // Import axios for making HTTP requests
-import { products } from 'components/Cart.js';
 
-const { OrdersApi } = new Client({
+const { ordersApi } = new Client({
   accessToken: process.env.SQUARE_ACCESS_TOKEN,
   environment: "sandbox",
 });
 
 export default async function handler(req, res) {
-  // ... existing code ...
-
+  const { orderItems } = req.body;
+  console.log("order", orderItems);
   if (req.method === "POST") {
     try {
-      const orderItems = products.map((product) => {
-        return {
-          catalogObjectId: product.id,
-          quantity: product.quantity,
-          variationName: "Default",
-        };
-      });
-
-      const response = await OrdersApi.createOrder({
-        locationId: "L8PQE1FX87X0V",
+      const response = await ordersApi.createOrder({
         order: {
-          idempotencyKey: randomUUID(),
-          lineItems: orderItems,
+          locationId: 'L8PQE1FX87X0V',
+          lineItems: orderItems
         },
+        idempotencyKey: randomUUID()
       });
 
-      // Accessing order information
-      const { id, location_id, source, line_items, total_money } =
-        response.result.order;
-
-      // Accessing line items
-      const { lineItems } = line_items;
-      lineItems.forEach((lineItem) => {
-        const { catalogObjectId, quantity, variationName } = lineItem;
-        // Process each line item as needed
-      });
-
-      // Accessing total money
-      const { amount, currency } = total_money;
-
-      // ... existing code ...
-
-      return res.json(response.result);
+      console.log(response.result);
+      res.json(
+        JSON.parse(
+          JSON.stringify(
+            response.result,
+            (key, value) =>
+              typeof value === "bigint" ? value.toString() : value // return everything else unchanged
+          )
+        )
+      );
     } catch (error) {
-      // ... existing error handling code ...
+      if (error instanceof ApiError) {
+        error.result.errors.forEach(function (e) {
+          console.log(e.category);
+          console.log(e.code);
+          console.log(e.detail);
+        });
+      } else {
+        console.log("Unexpected error occurred: ", error);
+      }
     }
   } else {
     return res.status(500).send();
