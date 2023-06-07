@@ -6,18 +6,19 @@ import Collections from "../components/Collections";
 import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext.js";
 
-export default function Home({ product, images }) {
+export default function Home({ product }) {
   const app = useContext(AppContext);
   const [products, setProducts] = useState(product.objects);
   console.log(product);
-  const [img, setImg] = useState(images.objects);
-  const getImageUrl = (id) => {
-    img.filter((prevImage) => {
-      if (prevImage.id === id) {
-        console.log(prevImage.image_data.url)
-        return prevImage.image_data.url;
-      }
-    });
+
+  const getImageUrl = async(id) => {
+    const res = await axios.get(`https://connect.squareupsandbox.com/v2/catalog/object/${id}`,{
+    headers: {
+      "Content-type": "application/json",
+      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
+    },
+  });
+    return res.objects.imageData.url;
   };
 
   return (
@@ -34,10 +35,10 @@ export default function Home({ product, images }) {
             {products?.map((product) => (
               <div key={product.id} className="group relative">
                 <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                  {getImageUrl(product.item_variation_data?.image_ids)
+                  {product.item_variation_data?.image_ids[0]
                    && (
                     <Image
-                      src="https://square-catalog-sandbox.s3.amazonaws.com/files/187c1481ba2b3091b3ff277b556c2a835d4fffa8/original.jpeg"
+                      src={getImageUrl()}
                       alt={product.item_variation_data.name}
                       width={500}
                       height={500}
@@ -89,14 +90,6 @@ export const getStaticProps = async () => {
       "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
     },
   });
-  const image = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=IMAGE",{
-    method: "GET",
-    headers: {
-      "Content-type": "application/json",
-      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
-    },
-  });
   const product = await res.json();
-  const images = await image.json();
-  return { props: { product, images } };
+  return { props: { product } };
 };

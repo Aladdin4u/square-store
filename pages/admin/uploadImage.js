@@ -8,7 +8,7 @@ import useFetch from "../../hooks/useFetch"
 import Loader from "../../components/Loader"
 import { faListSquares } from "@fortawesome/free-solid-svg-icons";
 
-export default function UploadImage({ repoImage }) {
+export default function UploadImage() {
   // const {get, post, loading} = useFetch()
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -16,7 +16,23 @@ export default function UploadImage({ repoImage }) {
   const [image, setImage] = useState(null);
   const [changeImage, setChangeImage] = useState(null);
   const [imageId, setImageId] = useState("");
-  const [data, setData] = useState(repoImage.objects);
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    setLoading(true)
+    const fetchData = async() => {
+      try {
+        const res = await axios.get("../api/image/getImage")
+        console.lof(res)
+        setData(res.data.objects)
+        setLoading(false)
+      } catch (error) {
+        console.log(error)
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   useEffect(() => {
     if (!image) return;

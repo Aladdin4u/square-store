@@ -5,10 +5,24 @@ import Siderbar from "../../components/Sidebar";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import Loader from "../../components/Loader";
 
-export default function ProductList({ product}) {
-  const [data, setData] = useState(product.objects);
+export default function ProductList() {
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
-  console.log("swetData==>", product);
+
+  useEffect(() => {
+    setLoading(true)
+    const fetchData = async() => {
+      try {
+        const res = await axios.get("../api/catalog/get")
+        setData(res.data.objects)
+        setLoading(false)
+      } catch (error) {
+        console.log(error)
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   const deleteProduct = async (e, id) => {
     e.preventDefault();
@@ -64,14 +78,14 @@ export default function ProductList({ product}) {
                 data.map((item) => (
                   <tr className="border-b" key={item.id}>
                     <td className="py-4">{`${
-                      item.updated_at.split("T")[0]
+                      item.updatedAt.split("T")[0]
                     }`}</td>
                     <td className="py-4 text-gray-500">
-                      {item.item_variation_data.name}
+                      {item.itemVariationData.name}
                     </td>
                     <td className="py-4 text-gray-500">{item.type}</td>
                     <td className="py-4 text-gray-500">
-                      {item.item_variation_data.price_money.amount}
+                      {item.itemVariationData.priceMoney.amount}
                     </td>
                     <td className="py-4 font-medium text-red-600 hover:text-red-500">
                       <button onClick={(e) => deleteProduct(e, item.id)}>
@@ -97,16 +111,4 @@ ProductList.getLayout = function PageLayout(page) {
       {page}
     </div>
   );
-};
-
-export const getStaticProps = async () => {
-  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=ITEM_VARIATION",{
-    method: "GET",
-    headers: {
-      "Content-type": "application/json",
-      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
-    },
-  });
-  const product = await res.json();
-  return { props: { product} };
 };

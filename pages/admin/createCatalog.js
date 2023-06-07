@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
 import Image from "next/image";
@@ -13,8 +13,7 @@ import Link from "next/link";
 import useFetch from "../../hooks/useFetch";
 import Loader from "../../components/Loader";
 
-export default function CreateCatalog({ repoImage }) {
-  console.log(repoImage);
+export default function CreateCatalog() {
   // const { get, post, loading } = useFetch();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -64,7 +63,7 @@ export default function CreateCatalog({ repoImage }) {
   );
   const content = JSON.stringify(convertToRaw(editorState.getCurrentContent()));
   const [selectedImage, setSelectedImage] = useState([]);
-  const [image, setImage] = useState(repoImage.objects);
+  const [image, setImage] = useState(null);
   const [checked, setChecked] = useState(false);
   const [error, setError] = useState(false);
   const [variation, setVariation] = useState([]);
@@ -76,8 +75,18 @@ export default function CreateCatalog({ repoImage }) {
     color: "",
     size: "",
   });
-  console.log("size ===", size);
-  console.log("color ===", color);
+  
+  useEffect(() => {
+    const fetchData = async() => {
+      try {
+        const res = await axios.get("../api/image/getImage")
+        setImage(res.data.objects)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchData()
+  }, [])
   const handleChange = (e) => {
     setFormData((prevFormData) => {
       const { name, value, type, checked } = e.target;
@@ -413,7 +422,7 @@ export default function CreateCatalog({ repoImage }) {
                 disabled={loading}
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                {loading ? <span classNamme="h-12 w-24"> <Loader /></span> : "Save"}
+                {loading ? <span className="h-12 w-24"> <Loader /></span> : "Save"}
               </button>
             </div>
           </form>
@@ -460,7 +469,7 @@ export default function CreateCatalog({ repoImage }) {
                             <div className="mt-2">
                               <div className="w-full flex justify-between items-end gap-4">
                                 <div className="w-full max-h-96 h-auto overflow-auto">
-                                  {repoImage ? (
+                                  {image ? (
                                     <table className="mt-6 divide-y w-full text-left table-fixed">
                                       <thead>
                                         <tr className="text-gray-500">
@@ -472,11 +481,11 @@ export default function CreateCatalog({ repoImage }) {
                                         {image.map((item) => (
                                           <tr key={item.id}>
                                             <td className="py-4 text-gray-500">
-                                              {item.image_data.name}
+                                              {item.imageData.name}
                                             </td>
                                             <td className="py-4 text-gray-500">
                                               <Image
-                                                src={item.image_data.url}
+                                                src={item.imageData.url}
                                                 width={300}
                                                 height={300}
                                                 alt="catalog image"
@@ -525,7 +534,7 @@ export default function CreateCatalog({ repoImage }) {
                       <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                         <button
                           type="button"
-                          className="mt-3 inline-flex w-full justify-center rounded-md bg-red-600 hover:bg-red-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-red-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                          className="mt-3 inline-flex w-full justify-center rounded-md bg-green-600 hover:bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-red-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                           onClick={() => setOpen(false)}
                           ref={cancelButtonRef}
                         >
@@ -543,18 +552,6 @@ export default function CreateCatalog({ repoImage }) {
     </div>
   );
 }
-
-export const getStaticProps = async () => {
-  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=IMAGE",{
-    method: "GET",
-    headers: {
-      "Content-type": "application/json",
-      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
-    },
-  });
-  const repoImage = await res.json();
-  return { props: { repoImage } };
-};
 
 CreateCatalog.getLayout = function PageLayout(page) {
   return (

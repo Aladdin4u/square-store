@@ -1,4 +1,4 @@
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import Siderbar from "../../components/Sidebar";
 import axios from "axios";
@@ -10,13 +10,28 @@ export default function Inventry({ inventry }) {
   const [loading, setLoading] = useState(false);
 
   const cancelButtonRef = useRef(null);
-  const [data, setData] = useState(inventry.objects);
+  const [data, setData] = useState(null);
   const [formData, setFormData] = useState({
     id: "",
     quantity: "",
     type: "additem",
   });
   console.log(formData);
+  
+  useEffect(() => {
+    setLoading(true)
+    const fetchData = async() => {
+      try {
+        const res = await axios.get("../api/catalog/get")
+        setData(res.data.objects)
+        setLoading(false)
+      } catch (error) {
+        console.log(error)
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   const handleChange = (e) => {
     setFormData((prevFormData) => {
@@ -118,16 +133,16 @@ export default function Inventry({ inventry }) {
               data.map((item) => (
                 <tr className="border-b" key={item.id}>
                   <td className="py-4">{`${
-                      item.updated_at.split("T")[0]
+                      item.updatedAt.split("T")[0]
                     }`}</td>
                   <td className="py-4 text-gray-500">
-                  {item.item_variation_data.name}
+                  {item.itemVariationData.name}
                   </td>
                   <td className="py-4 text-gray-500">
                   {item.type}
                   </td>
                   <td className="py-4 text-gray-500">
-                    ${item.item_variation_data.price_money.amount}
+                    ${item.itemVariationData.priceMoney.amount}
                   </td>
                   <td className="py-4  text-blue-700 hover:text-blue-900 font-medium">
                     <button onClick={() => handleClick(item.id)}>Edit</button>
@@ -264,16 +279,4 @@ Inventry.getLayout = function PageLayout(page) {
       {page}
     </div>
   );
-};
-
-export const getStaticProps = async () => {
-  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=ITEM_VARIATION",{
-    method: "GET",
-    headers: {
-      "Content-type": "application/json",
-      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
-    },
-  });
-  const inventry = await res.json();
-  return { props: { inventry } };
 };
