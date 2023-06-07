@@ -36,7 +36,7 @@ export default function UploadImage({ repoImage }) {
           }
         );
         console.log(res);
-        getImage();
+        // getImage();
         setImage(null);
         console.log("deleted", image);
         setLoading(false)
@@ -54,7 +54,7 @@ export default function UploadImage({ repoImage }) {
       try {
         setLoading(true)
         const res = await axios.get("../api/image/getImage");
-        setData(res.data.objects);
+        // setData(res.data.objects);
         setLoading(false)
       } catch (error) {
         console.log(error);
@@ -92,7 +92,7 @@ export default function UploadImage({ repoImage }) {
       setData((prevData) => prevData.filter((item) => item.id !== id));
       const res = await axios.post("../api/catalog/delete", { id });
       console.log(res);
-      getImage();
+      // getImage();
       setLoading(false)
     } catch (error) {
       console.log(error);
@@ -144,7 +144,7 @@ export default function UploadImage({ repoImage }) {
             <tbody className="divide-y">
               {data.map((item) => (
                 <tr key={item.id}>
-                  <td className="py-4 text-gray-500">{item.imageData.name}</td>
+                  <td className="py-4 text-gray-500">{item.image_data.name}</td>
                   <td className="py-4 text-gray-500">
                     <Image
                       src={item.image_data.url}
@@ -272,7 +272,7 @@ export default function UploadImage({ repoImage }) {
     </div>
   );
 }
-export const getStaticProps = async () => {
+export const getServerSideProps = async () => {
   const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=IMAGE",{
     method: "GET",
     headers: {

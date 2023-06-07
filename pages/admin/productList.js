@@ -64,7 +64,7 @@ export default function ProductList({ product}) {
                 data.map((item) => (
                   <tr className="border-b" key={item.id}>
                     <td className="py-4">{`${
-                      item.updatedAt.split("T")[0]
+                      item.updated_at.split("T")[0]
                     }`}</td>
                     <td className="py-4 text-gray-500">
                       {item.item_variation_data.name}

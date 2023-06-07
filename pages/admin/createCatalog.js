@@ -545,7 +545,13 @@ export default function CreateCatalog({ repoImage }) {
 }
 
 export const getStaticProps = async () => {
-  const res = await axios.get("http://localhost:3000/api/image/getImage");
+  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=IMAGE",{
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
+    },
+  });
   const repoImage = await res.json();
   return { props: { repoImage } };
 };
