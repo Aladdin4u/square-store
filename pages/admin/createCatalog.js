@@ -472,11 +472,11 @@ export default function CreateCatalog({ repoImage }) {
                                         {image.map((item) => (
                                           <tr key={item.id}>
                                             <td className="py-4 text-gray-500">
-                                              {item.imageData.name}
+                                              {item.image_data.name}
                                             </td>
                                             <td className="py-4 text-gray-500">
                                               <Image
-                                                src={item.imageData.url}
+                                                src={item.image_data.url}
                                                 width={300}
                                                 height={300}
                                                 alt="catalog image"

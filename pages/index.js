@@ -14,8 +14,8 @@ export default function Home({ product, images }) {
   const getImageUrl = (id) => {
     img.filter((prevImage) => {
       if (prevImage.id === id) {
-        console.log(prevImage.imageData.url)
-        return prevImage.imageData.url;
+        console.log(prevImage.image_data.url)
+        return prevImage.image_data.url;
       }
     });
   };
@@ -34,11 +34,11 @@ export default function Home({ product, images }) {
             {products?.map((product) => (
               <div key={product.id} className="group relative">
                 <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                  {product.itemVariationData?.imageIds
+                  {getImageUrl(product.item_variation_data?.image_ids[0])
                    && (
                     <Image
                       src="https://square-catalog-sandbox.s3.amazonaws.com/files/187c1481ba2b3091b3ff277b556c2a835d4fffa8/original.jpeg"
-                      alt={product.itemVariationData.name}
+                      alt={product.item_variation_data.name}
                       width={500}
                       height={500}
                       className="h-full w-full object-cover lg:h-full lg:w-full"
@@ -52,16 +52,16 @@ export default function Home({ product, images }) {
                     <h3 className="text-sm text-gray-700">
                       <a href={product.href}>
                         <span aria-hidden="true" className="absolute inset-0" />
-                        {product.itemVariationData.name.split(",")[0]}
+                        {product.item_variation_data.name.split(",")[0]}
                       </a>
                     </h3>
                     <p className="mt-1 text-sm text-gray-500">
-                      {product.itemVariationData.name.split(",")[1]}
+                      {product.item_variation_data.name.split(",")[1]}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">
-                      ${product.itemVariationData.priceMoney.amount}
+                      ${product.item_variation_data.price_money.amount}
                     </p>
                     <div
                       className="z-10 absolute font-bold text-green-300 mt-1 text-sm text-green-500 hover:bg-green-900"
@@ -82,8 +82,20 @@ export default function Home({ product, images }) {
 }
 
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:3000/api/catalog/get");
-  const image = await fetch("http://localhost:3000/api/image/getImage");
+  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=ITEM_VARIATION",{
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
+    },
+  });
+  const image = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=IMAGE",{
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
+    },
+  });
   const product = await res.json();
   const images = await image.json();
   return { props: { product, images } };

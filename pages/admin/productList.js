@@ -67,11 +67,11 @@ export default function ProductList({ product}) {
                       item.updatedAt.split("T")[0]
                     }`}</td>
                     <td className="py-4 text-gray-500">
-                      {item.itemVariationData.name}
+                      {item.item_variation_data.name}
                     </td>
                     <td className="py-4 text-gray-500">{item.type}</td>
                     <td className="py-4 text-gray-500">
-                      {item.itemVariationData.priceMoney.amount}
+                      {item.item_variation_data.price_money.amount}
                     </td>
                     <td className="py-4 font-medium text-red-600 hover:text-red-500">
                       <button onClick={(e) => deleteProduct(e, item.id)}>
@@ -100,7 +100,13 @@ ProductList.getLayout = function PageLayout(page) {
 };
 
 export const getStaticProps = async () => {
-  const res = await fetch("http://localhost:3000/api/catalog/get");
+  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=ITEM_VARIATION",{
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
+    },
+  });
   const product = await res.json();
   return { props: { product} };
 };

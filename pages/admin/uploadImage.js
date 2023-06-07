@@ -142,12 +142,12 @@ export default function UploadImage({ repoImage }) {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {data?.map((item) => (
+              {data.map((item) => (
                 <tr key={item.id}>
                   <td className="py-4 text-gray-500">{item.imageData.name}</td>
                   <td className="py-4 text-gray-500">
                     <Image
-                      src={item.imageData.url}
+                      src={item.image_data.url}
                       width={300}
                       height={300}
                       alt="catalog image"
@@ -231,7 +231,7 @@ export default function UploadImage({ repoImage }) {
                                   className="hidden"
                                 />
                                 {imageId && <Image
-                                  src={changeImage ? URL.createObjectURL(changeImage) : imageId.imageData.url}
+                                  src={changeImage ? URL.createObjectURL(changeImage) : imageId.image_data.url}
                                   width={300}
                                   height={300}
                                   alt="catalog image"
@@ -273,7 +273,13 @@ export default function UploadImage({ repoImage }) {
   );
 }
 export const getStaticProps = async () => {
-  const res = await axios.get("http://localhost:3000/api/image/getImage");
+  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=IMAGE",{
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
+    },
+  });
   const repoImage = await res.json();
   return { props: { repoImage } };
 };
