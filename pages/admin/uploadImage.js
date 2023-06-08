@@ -160,10 +160,10 @@ export default function UploadImage() {
             <tbody className="divide-y">
               {data.map((item) => (
                 <tr key={item.id}>
-                  <td className="py-4 text-gray-500">{item.image_data.name}</td>
+                  <td className="py-4 text-gray-500">{item.imageData.name}</td>
                   <td className="py-4 text-gray-500">
                     <Image
-                      src={item.image_data.url}
+                      src={item.imageData.url}
                       width={300}
                       height={300}
                       alt="catalog image"
@@ -288,17 +288,6 @@ export default function UploadImage() {
     </div>
   );
 }
-export const getServerSideProps = async () => {
-  const res = await fetch("https://connect.squareupsandbox.com/v2/catalog/list?types=IMAGE",{
-    method: "GET",
-    headers: {
-      "Content-type": "application/json",
-      "Authorization": `Bearer ${process.env.SQUARE_ACCESS_TOKEN}`
-    },
-  });
-  const repoImage = await res.json();
-  return { props: { repoImage } };
-};
 
 UploadImage.getLayout = function PageLayout(page) {
   return (
