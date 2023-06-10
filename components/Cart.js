@@ -91,8 +91,8 @@ export default function Cart(props) {
                                   <li key={product.id} className="flex py-6">
                                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                       <Image
-                                        src={product.itemVariationData.imageIds[0]}
-                                        alt={product.itemVariationData.name}
+                                        src={product.imageData[0].imageData.url}
+                                        alt={product.imageData[0].imageData.name}
                                         width={200}
                                         height={200}
                                         className="h-full w-full object-cover object-center"

@@ -10,31 +10,36 @@ export default function Home() {
   const app = useContext(AppContext);
 
   const [products, setProducts] = useState(null);
+  const [newProducts, setNewProducts] = useState(null);
   const [images, setImages] = useState(null);
-  console.log(images, products)
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
-    const formData = async() => {
+    const formData = async () => {
       try {
-        const products = await axios.get("../api/catalog/get")
-        const images = await axios.get("../api/image/getImage")
-        setProducts(products.data.objects)
-        setImages(images.data.objects)
+        const products = await axios.get("../api/catalog/get");
+        const images = await axios.get("../api/image/getImage");
+        setProducts(products.data.objects);
+        setImages(images.data.objects);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
+    };
+    formData();
+  }, []);
+
+  useEffect(() => {
+    function newp() {
+     const newData =  products.map(({id,type,itemVariationData}) => {
+        const imageData = images.filter(i => i.id === itemVariationData.imageIds[0])
+        return {id,type,itemVariationData,imageData}
+      })
+      setNewProducts(newData)
     }
-    formData()
-  }, [])
-  const mapImage = products?.map(product => product.itemVariationData.imageIds[0])
-  console.log(mapImage)
-  const getImageUrl = (id) => {
-    images.filter((prevImage) => {
-      if (prevImage.id === id) {
-        console.log(prevImage.imageData.url)
-        return prevImage.imageData.url;
-      }
-    });
-  }
+    if(products && images) {
+      newp()
+    }
+  },[products, images])
+
   return (
     <div className="flex flex-col justify-center item-center">
       <Hero />
@@ -46,48 +51,50 @@ export default function Home() {
           </h2>
 
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {products && products.map((product) => (
-              <div key={product.id} className="group relative">
-                <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                  {getImageUrl(product.itemVariationData.imageIds[0])
-                   && (
-                    <Image
-                      src={getImageUrl(product.itemVariationData.imageIds[0])}
-                      alt={product.itemVariationData.name}
-                      width={500}
-                      height={500}
-                      className="h-full w-full object-cover lg:h-full lg:w-full"
-                      // unoptimized
-                      priority={true}
-                    />
-                  )}
-                </div>
-                <div className="mt-4 flex justify-between">
-                  <div>
-                    <h3 className="text-sm text-gray-700">
-                      <a href={product.href}>
-                        <span aria-hidden="true" className="absolute inset-0" />
-                        {product.itemVariationData.name.split(",")[0]}
-                      </a>
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      {product.itemVariationData.name.split(",")[1]}
-                    </p>
+            {newProducts &&
+              newProducts.map((product) => (
+                <div key={product.id} className="group relative">
+                  <div className="min-h-80 aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
+                    
+                      <Image
+                        src={product.imageData[0].imageData.url}
+                        alt={product.imageData[0].imageData.name}
+                        width={500}
+                        height={500}
+                        className="h-full w-full object-cover lg:h-full lg:w-full"
+                        // unoptimized
+                        priority={true}
+                      />
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      ${product.itemVariationData.priceMoney.amount}
-                    </p>
-                    <div
-                      className="z-10 absolute font-bold text-green-300 mt-1 text-sm text-green-500 hover:bg-green-900"
-                      onClick={() => app.onProductAdd(product)}
-                    >
-                      buy
+                  <div className="mt-4 flex justify-between">
+                    <div>
+                      <h3 className="text-sm text-gray-700">
+                        <a href={product.href}>
+                          <span
+                            aria-hidden="true"
+                            className="absolute inset-0"
+                          />
+                          {product.itemVariationData.name.split(",")[0]}
+                        </a>
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        {product.itemVariationData.name.split(",")[1]}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        ${product.itemVariationData.priceMoney.amount}
+                      </p>
+                      <div
+                        className="z-10 absolute font-bold text-green-300 mt-1 text-sm text-green-500 hover:bg-green-900"
+                        onClick={() => app.onProductAdd(product)}
+                      >
+                        buy
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>
